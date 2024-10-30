@@ -1,17 +1,4 @@
-@section('styles')
-    <style>
-    .alert-position-top-right {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1050;
-        width: 300px;
-    }
-    </style>
-@endsection
-
-
-<div class="alert alert-position-top-right alert-important alert-{{ $type }} alert-dismissible" role="alert">
+<div class="alert alert-important alert-{{ $type }} alert-dismissible" role="alert">
     <div class="d-flex">
         @if ($type === 'success')
             <div>

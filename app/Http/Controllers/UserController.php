@@ -110,4 +110,17 @@ class UserController extends Controller
         User::find($id)->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }
+
+    public function reset_password(Request $request)
+    {
+        $id = $request->input('id');
+    $user = User::find($id);
+    if ($user) {
+        $user->password = bcrypt('password');
+        $user->save();
+        return response()->json(['success' => true]);
+    } else {
+        return response()->json(['success' => false]);
+    }
+}
 }

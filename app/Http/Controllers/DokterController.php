@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pasien;
+use App\Models\Dokter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PasienController extends Controller
+class DokterController extends Controller
 {
     protected $form;
     protected $title;
 
     public function __construct()
     {
-        $this->title = 'Pasien';
+        $this->title = 'Dokter';
 
         $this->form = array(
             array(
-                'label' => 'Nomor Rekam Medis',
-                'field' => 'no_rm',
+                'label' => 'Kode Dokter',
+                'field' => 'kd_dokter',
                 'type' => 'text',
                 'placeholder' => '',
                 'width' => 6,
@@ -33,8 +33,8 @@ class PasienController extends Controller
                 'required' => true
             ),
             array(
-                'label' => 'Nama Pasien',
-                'field' => 'nama_pasien',
+                'label' => 'Nama Dokter',
+                'field' => 'nama',
                 'type' => 'text',
                 'width' => 6,
                 'placeholder' => 'Masukkan Nama',
@@ -56,6 +56,7 @@ class PasienController extends Controller
                 'type' => 'email',
                 'width' => 6,
                 'placeholder' => 'Masukkan Email',
+                'required' => true
             ),
             array(
                 'label' => 'NO. Hp (62xxx-xxxx-xxxx)',
@@ -111,6 +112,14 @@ class PasienController extends Controller
                 'placeholder' => '',
             ),
             array(
+                'label' => 'Spesialisasi',
+                'field' => 'spesialisasi',
+                'width' => 6,
+                'type' => 'text',
+                'placeholder' => '',
+                'required' => true
+            ),
+            array(
                 'label' => 'Status',
                 'field' => 'status',
                 'type' => 'select',
@@ -129,67 +138,70 @@ class PasienController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Pasien::all();
+            $data = Dokter::all();
             return datatables()::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-     
-                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-outline-primary btn-sm editProduct"><i class="fa-regular fa-pen-to-square"></i> Edit</a>';
-                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-outline-danger btn-sm deleteProduct"><i class="fa-solid fa-trash"></i> Delete</a>';
-    
+
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-outline-primary btn-sm editProduct"><i class="fa-regular fa-pen-to-square"></i> Edit</a>';
+                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-outline-danger btn-sm deleteProduct"><i class="fa-solid fa-trash"></i> Delete</a>';
+
                             return $btn;
                     })
                     ->rawColumns(['action'])
                     ->make(true);
         }
 
-        return view('pages.pasiens', ['form' => $this->form, 'title' => $this->title]);
+        return view('pages.dokters', ['form' => $this->form, 'title' => $this->title]);
     }
 
     public function generateUniqueCode($id) {
         $date = date('ym');
-        $pelangganPart = substr($id, -3);
+        $dokterPart = substr($id, -3);
 
-
-        $uniqueCode = "RM" . $date . $pelangganPart;
+        $uniqueCode = "DR" . $date . $dokterPart;
 
         return $uniqueCode;
     }
 
+    
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nik' => 'required|string|max:33',
-            'nama_pasien' => 'required',
+            'nik' => 'required',
+            'nama' => 'required',
             'alamat' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'jk' => 'required|max:1',
+            'email' => 'required',
+            'tanggal_lahir' => 'required',
+            'jk' => 'required',
+            'spesialisasi' => 'required',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $pasienCount = Pasien::whereYear('created_at', date('Y'))
+        $dokterCount = Dokter::whereYear('created_at', date('Y'))
                                 ->whereMonth('created_at', date('m'))
                                 ->count();
-        $pasienRM = str_pad($pasienCount + 1, 3, '0', STR_PAD_LEFT);
+        $dokterKD = str_pad($dokterCount + 1, 3, '0', STR_PAD_LEFT);
 
-        $user = Pasien::updateOrCreate(
+        $user = Dokter::updateOrCreate(
             ['id' => $request->id],
-            ['nama_pasien' => $request->nama_pasien, 
-             'email' => $request->email, 
+            ['nama' => $request->nama,
              'nik' => $request->nik, 
+             'alamat' => $request->alamat, 
+             'email' => $request->email, 
              'no_hp' => $request->no_hp, 
              'tanggal_lahir' => $request->tanggal_lahir,
-             'alamat' => $request->alamat, 
              'jk' => $request->jk, 
              'pekerjaan' => $request->pekerjaan, 
              'kewarganegaraan' => $request->kewarganegaraan, 
              'agama' => $request->agama, 
              'pendidikan' => $request->pendidikan, 
+             'spesialisasi' => $request->spesialisasi, 
              'status' => $request->status, 
-             'no_rm' => $this->generateUniqueCode($pasienRM)
+             'kd_dokter' => $this->generateUniqueCode($dokterKD)
              ]
         );
 
@@ -198,7 +210,7 @@ class PasienController extends Controller
 
     public function edit($id)
     {
-        $user = Pasien::find($id);
+        $user = Dokter::find($id);
         return response()->json($user);
     }
 
@@ -206,31 +218,33 @@ class PasienController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nik' => 'required|string|max:33',
-            'nama_pasien' => 'required',
+            'nik' => 'required',
+            'nama' => 'required',
             'alamat' => 'required',
-            'tanggal_lahir' => 'required|date',
-            'jk' => 'required|max:1',
+            'email' => 'required',
+            'tanggal_lahir' => 'required',
+            'jk' => 'required',
+            'spesialisasi' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = Pasien::find($id);
+        $user = Dokter::find($id);
         $user->update(
             [
-                'nama_pasien' => $request->nama_pasien, 
+                'nama' => $request->nama, 
+                'alamat' => $request->alamat, 
                 'email' => $request->email, 
-                'nik' => $request->nik, 
                 'no_hp' => $request->no_hp, 
                 'tanggal_lahir' => $request->tanggal_lahir,
-                'alamat' => $request->alamat, 
                 'jk' => $request->jk, 
                 'pekerjaan' => $request->pekerjaan, 
                 'kewarganegaraan' => $request->kewarganegaraan, 
                 'agama' => $request->agama, 
                 'pendidikan' => $request->pendidikan, 
+                'spesialisasi' => $request->spesialisasi, 
                 'status' => $request->status, 
             ]
     );
@@ -241,7 +255,7 @@ class PasienController extends Controller
     // Fungsi untuk menghapus data
     public function destroy($id)
     {
-        Pasien::find($id)->delete();
+        Dokter::find($id)->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }
 }

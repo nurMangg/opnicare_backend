@@ -15,14 +15,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Dashboard - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
+    <title>{{ config('app.name', 'Opnicare System') }}</title>
 
     <!-- CSS files -->
     <link href="{{ asset('dist/css/tabler.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-flags.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-payments.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-vendors.min.css?1692870487') }}" rel="stylesheet" />
-    <link href="{{ asset('dist/css/demo.min.css?1692870487') }} rel=" stylesheet" />
+    <link href="{{ asset('dist/css/demo.min.css?1692870487') }} rel="stylesheet" />
     <style>
         @import url('https://rsms.me/inter/inter.css');
 
@@ -34,17 +34,80 @@
             font-feature-settings: "cv03", "cv04", "cv11";
         }
 
+        .alert-position-top-right {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 300px;
+            display: flex;
+            flex-direction: column; /* Memungkinkan alert ditumpuk ke bawah */
+            gap: 1px; /* Jarak antara alert */
+        }
+
         .btn-gr {
             background-color: #007037;
             color: white;
         }
+
+        .btn-outline-gr {
+            --tblr-btn-color: #007037;
+            --tblr-btn-bg: transparent;
+            --tblr-btn-border-color: #007037;
+            --tblr-btn-hover-color: var(--tblr-primary-fg);
+            --tblr-btn-hover-border-color: transparent;
+            --tblr-btn-hover-bg: #007037;
+            --tblr-btn-active-color: var(--tblr-primary-fg);
+            --tblr-btn-active-bg: #007037;
+            --tblr-btn-disabled-color: #007037;
+            --tblr-btn-disabled-border-color: #007037;
+        }
+
+        .dtable-container {
+            max-width: 100% !important;
+
+
+            table {
+                white-space: nowrap !important;
+                width:100%!important;
+                border-collapse:collapse!important;
+            }
+        }
+
+
+        .navbar-vertical .nav-item .nav-link {
+            transition: background 0.2s ease, color 0.2s ease;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .navbar-vertical .nav-item .nav-link:hover {
+            background-color: #f1f5f9;
+            color: #0056b3;
+        }
+
+        .navbar-vertical .nav-item .icon {
+            color: #0056b3;
+            transition: color 0.2s ease;
+        }
+
+        .navbar-vertical .nav-item .nav-link-title {
+            font-weight: 500;
+        }
+
+
     </style>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.4.3/css/scroller.dataTables.min.css">
+
 
     @yield('styles')
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/scroller/2.4.3/js/dataTables.scroller.min.js"></script>
 
 </head>
 <style>
@@ -62,76 +125,111 @@
 </head>
 
 <body>
-    <script src="./dist/js/demo-theme.min.js?1692870487"></script>
+    <script src="{{ asset('dist/js/demo-theme.min.js') }}"></script>
     <div class="page">
         <!-- Sidebar -->
-        <aside class="navbar navbar-vertical navbar-expand-lg">
+        <aside class="navbar navbar-vertical navbar-expand-lg navbar-light bg-white shadow-sm">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
                     aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark">
-                    <a href=".">
-                        <img src="{{ asset('dist/img/opnicare.png') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+                    <a href="{{ route('dashboard') }}">
+                        <img src="{{ asset('dist/img/opnicare.png') }}" width="110" height="32" alt="Opni Care" class="navbar-brand-image">
                     </a>
                 </h1>
                 <div class="collapse navbar-collapse" id="sidebar-menu">
                     <ul class="navbar-nav pt-lg-3">
-                        <li class="nav-item">
-                            <a class="nav-link" href="./">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
-                                </span>
-                                <span class="nav-link-title">
-                                    Home
-                                </span>
+                        <!-- Menu Item -->
+                        <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center" href="{{ route('dashboard') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M5 12l-2 0l9 -9l9 9l-2 0"/>
+                                    <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/>
+                                    <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/>
+                                </svg>
+                                <span class="nav-link-title">Home</span>
                             </a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/package -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
-                                        <path d="M12 12l8 -4.5" />
-                                        <path d="M12 12l0 9" />
-                                        <path d="M12 12l-8 -4.5" />
-                                        <path d="M16 5.25l-8 4.5" /></svg>
-                                </span>
-                                <span class="nav-link-title">
-                                    Data Master
-                                </span>
+        
+                        <!-- Dropdown for Data Layanan -->
+                        <li class="nav-item dropdown {{ request()->is('layanans/*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
+                               data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M14 18h-4a2 2 0 0 1 -2 -2v-8h2v8a2 2 0 0 0 2 2h8a2 2 0 0 1 2 2v8h-2v-8a2 2 0 0 0 -2 -2h-4"/>
+                                    <path d="M14 10v-8h-2v8"/>
+                                    <path d="M13 10h-3a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h3v-8a2 2 0 0 0 -2 -2"/>
+                                </svg>
+                                <span class="nav-link-title">Layanan</span>
                             </a>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-menu-columns">
-                                    <div class="dropdown-menu-column">
-                                        <a class="dropdown-item" href="{{ route('users.index') }}">
-                                            Pengguna
-                                        </a>
-                                        <a class="dropdown-item" href="{{ route('pasiens.index') }}">
-                                            Pasien
-                                        </a>
-
+                                <div class="dropdown-menu show">
+                                    <div class="dropdown-menu-columns">
+                                            <a class="dropdown-item {{ Route::is('pendaftarans.*') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
+                                            <a class="dropdown-item {{ Route::is('kamars.*') ? 'active' : '' }}" href="{{ route('kamars.index') }}">Kamar</a>
                                     </div>
                                 </div>
-                            </div>
+                        </li>
+
+                        <!-- Dropdown for Data Layanan -->
+                        <li class="nav-item dropdown {{ request()->is('data/*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
+                               data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                                </svg>
+                                <span class="nav-link-title">Data</span>
+                            </a>
+                                <div class="dropdown-menu show">
+                                    <div class="dropdown-menu-columns">
+                                            <a class="dropdown-item {{ Route::is('datapolis.*') ? 'active' : '' }}" href="{{ route('datapolis.index') }}">Data Poli</a>
+                                    </div>
+                                </div>
+                        </li>
+                        
+                        <!-- Dropdown for Data Master -->
+                        <li class="nav-item dropdown {{ request()->is('masters/*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
+                               data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"/>
+                                    <path d="M12 12l8 -4.5"/>
+                                    <path d="M12 12l0 9"/>
+                                    <path d="M12 12l-8 -4.5"/>
+                                    <path d="M16 5.25l-8 4.5"/>
+                                </svg>
+                                <span class="nav-link-title">Data Master</span>
+                            </a>
+                                <div class="dropdown-menu show">
+                                    <div class="dropdown-menu-columns">
+                                            <a class="dropdown-item {{ Route::is('pasiens.*') ? 'active' : '' }}" href="{{ route('pasiens.index') }}">Pasien</a>
+                                            <a class="dropdown-item {{ Route::is('polis.*') ? 'active' : '' }}" href="{{ route('polis.index') }}">Poli</a>
+                                            <a class="dropdown-item {{ Route::is('kamars.*') ? 'active' : '' }}" href="{{ route('kamars.index') }}">Kamar</a>
+                                            <a class="dropdown-item {{ Route::is('dokters.*') ? 'active' : '' }}" href="{{ route('dokters.index') }}">Dokter</a>
+                                            <a class="dropdown-item {{ Route::is('obats.*') ? 'active' : '' }}" href="{{ route('obats.index') }}">Obat</a>
+                                            <a class="dropdown-item {{ Route::is('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Pengguna</a>
+                                        
+                                    </div>
+                                </div>
                         </li>
                     </ul>
                 </div>
             </div>
         </aside>
+        
         <!-- Page content -->
         <div class="page-wrapper">
             <div class="container p-3">
@@ -285,7 +383,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
+                    <div class="nav-item dropdown d-none d-lg-flex">
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                             aria-label="Open user menu">
                             <span class="avatar avatar-sm"
@@ -307,6 +405,3 @@
                 </div>
             </div>
 
-
-            <!-- Page header -->
-            <div class="page-header d-print-none">
