@@ -63,6 +63,10 @@
             --tblr-btn-disabled-border-color: #007037;
         }
 
+        .navbar {
+            --tblr-navbar-active-border-color: #007037;
+        }
+
         .dtable-container {
             max-width: 100% !important;
 
@@ -76,18 +80,18 @@
 
 
         .navbar-vertical .nav-item .nav-link {
-            transition: background 0.2s ease, color 0.2s ease;
+            transition: background 0.2s ease, #007037 0.2s ease;
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
         }
 
         .navbar-vertical .nav-item .nav-link:hover {
             background-color: #f1f5f9;
-            color: #0056b3;
+            color: #007037;
         }
 
         .navbar-vertical .nav-item .icon {
-            color: #0056b3;
+            color: #007037;
             transition: color 0.2s ease;
         }
 
@@ -172,8 +176,9 @@
                             </a>
                                 <div class="dropdown-menu show">
                                     <div class="dropdown-menu-columns">
-                                            <a class="dropdown-item {{ Route::is('pendaftarans.*') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
-                                            <a class="dropdown-item {{ Route::is('kamars.*') ? 'active' : '' }}" href="{{ route('kamars.index') }}">Kamar</a>
+                                            <a class="dropdown-item {{ Route::is('pendaftarans.index') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
+                                            <a class="dropdown-item {{ Route::is('cek-pendaftarans.index') ? 'active' : '' }}" href="{{ route('cek-pendaftarans.index') }}">Cek Pendaftaran Pasien</a>
+
                                     </div>
                                 </div>
                         </li>
@@ -193,6 +198,8 @@
                                 <div class="dropdown-menu show">
                                     <div class="dropdown-menu-columns">
                                             <a class="dropdown-item {{ Route::is('datapolis.*') ? 'active' : '' }}" href="{{ route('datapolis.index') }}">Data Poli</a>
+                                            <a class="dropdown-item {{ Route::is('pendaftarans.listpendaftarans') ? 'active' : '' }}" href="{{ route('pendaftarans.listpendaftarans') }}">Data Pendaftaran</a>
+
                                     </div>
                                 </div>
                         </li>

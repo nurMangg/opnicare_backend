@@ -119,6 +119,7 @@
                 $('#saveBtn').val("edit-user");
                 $('#ajaxModel').modal('show');
                 $('#user_id').val(data.id);
+                $('#kd_poli').val(data.kd_poli);
                 $('#nama_poli').val(data.nama_poli);
                 $('#deskripsi').val(data.deskripsi);
             })
@@ -131,6 +132,8 @@
 
             // Reset error messages
             $('#nama_poliError').text('');
+            $('#kd_poliError').text('');
+
 
             var actionType = $(this).val();
             var url = actionType === "create-user" ? "{{ route('polis.store') }}" :
@@ -162,6 +165,9 @@
                             @endcomponent
                         `);
                     }
+
+                    document.location.reload(true);
+                    window.location.reload(true);
                 },
                 error: function (xhr) {
                     $('#saveBtn').html('Save Changes');
@@ -169,6 +175,9 @@
                     // Tampilkan pesan error
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
+                        if (errors.kd_poli) {
+                            $('#kd_poliError').text(errors.kd_poli[0]);
+                        }
                         if (errors.nama_poli) {
                             $('#nama_poliError').text(errors.nama_poli[0]);
                         }
@@ -179,6 +188,9 @@
                             @endcomponent
                         `);
                     }
+
+                    document.location.reload(true);
+                    window.location.reload(true);
                 }
             });
         });
@@ -194,14 +206,20 @@
                 type: 'DELETE',
                 url: "{{ route('polis.index') }}/" + user_id,
                 success: function (data) {
+                    
                     $('#laravel_datatable').DataTable().ajax.reload();
                     $('#confirmDeleteModal').modal('hide');
+                    
+
 
                     // Tampilkan alert sukses
                     $('#alertPlaceholder').html(`
                             @component('components.popup.alert', ['type' => 'success', 'message' => 'Obat berhasil dihapus!'])
                             @endcomponent
                         `);
+
+                        document.location.reload(true);
+                        window.location.reload(true);
                 },
                 error: function (xhr) {
                     $('#confirmDeleteModal').modal('hide');

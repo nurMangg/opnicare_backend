@@ -9,6 +9,7 @@ class Poli extends Model
     protected $table = 'mspoli';
 
     protected $fillable = [
+        'kd_poli',
         'nama_poli',
         'deskripsi'
     ];

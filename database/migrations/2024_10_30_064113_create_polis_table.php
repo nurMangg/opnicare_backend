@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('mspoli', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('kd_poli');
             $table->string('nama_poli');
             $table->string('deskripsi')->nullable();            
             $table->timestamps();

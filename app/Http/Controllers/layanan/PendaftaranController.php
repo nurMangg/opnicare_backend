@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\PasienController;
 use App\Models\Dokter;
 use App\Models\Pasien;
+use App\Models\Pendaftaran;
 use App\Models\Poli;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PendaftaranController extends Controller
 {
@@ -141,7 +143,7 @@ class PendaftaranController extends Controller
 
     public function index(Request $request)
     {
-        return view('pages.layanans.pendaftarans', ['form' => $this->form, 'form_daftar' => $this->form_daftar ,'title' => $this->title]);
+        return view('pages.layanans.pendaftaran.pendaftarans', ['form' => $this->form, 'form_daftar' => $this->form_daftar ,'title' => $this->title]);
     }
 
     public function show($id)
@@ -155,4 +157,88 @@ class PendaftaranController extends Controller
         }
     }
 
+
+    public function generateUniqueCode($id, $poli_id, $tanggal) {
+        $dokterPart = substr($id, -3);
+
+        $poli = Poli::find($poli_id);
+        
+        $namaPoli = $poli->kd_poli;
+        $date = date('Ymd', strtotime($tanggal));
+        
+
+        $uniqueCode = $namaPoli . $date . $dokterPart;
+
+        return $uniqueCode;
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'poli_id' => 'required|exists:mspoli,id',
+            'dokter_id' => 'required|exists:msdokter,id',
+            'tanggal_daftar' => 'required|date',
+            'keluhan' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if (Pasien::where('no_rm', $request->no_rm)->doesntExist()) {
+            return response()->json(['error' => 'Data pasien tidak ditemukan'], 422);
+        }
+
+        if (Pendaftaran::where('pasien_id', $request->no_rm)
+            ->where('poli_id', $request->poli_id)
+            ->whereDate('tanggal_daftar', $request->tanggal_daftar)
+            ->exists()) {
+            return response()->json(['error' => 'Pasien sudah terdaftar di poli ini untuk tanggal yang dipilih'], 421);
+        }
+
+        $pendaftaranCount = Pendaftaran::whereDate('tanggal_daftar', $request->tanggal_daftar)
+                                ->where('poli_id', $request->poli_id)
+                                ->count();
+        $dokterKD = str_pad($pendaftaranCount + 1, 4, '0', STR_PAD_LEFT);
+
+        $pendaftaran = Pendaftaran::create([
+            'no_pendaftaran' => $this->generateUniqueCode($dokterKD, $request->poli_id, $request->tanggal_daftar),
+            'pasien_id' => $request->no_rm,
+            'poli_id' => $request->poli_id,
+            'dokter_id' => $request->dokter_id,
+            'tanggal_daftar' => $request->tanggal_daftar,
+            'keluhan' => $request->keluhan,
+            'status' => 'Terdaftar'
+        ]);
+
+        return response()->json(['success' => 'Pendaftaran berhasil disimpan.']);
+    }
+
+    public function getPendaftarans(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Pendaftaran::all();
+            return datatables()::of($data)
+                    ->addIndexColumn()
+                    // ->addColumn('action', function($row){
+
+                    //     $btn = ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-outline-danger btn-sm deleteProduct"><i class="fa-solid fa-trash"></i> Delete</a>';
+                        
+                    //         return $btn;
+                    // })
+                    ->editColumn('poli_id', function($row) {
+                        return Poli::find($row->poli_id)->nama_poli;
+                    })
+                    ->editColumn('dokter_id', function($row) {
+                        return Dokter::find($row->dokter_id)->nama;
+                    })
+                    ->addColumn('nama_pasien', function($row) {
+                        return Pasien::where('no_rm', $row->pasien_id)->first()->nama_pasien;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+
+        return view('pages.layanans.pendaftaran.listpendaftarans', ['title' => "Data Pendaftaran Pasien"]);
+    }
 }

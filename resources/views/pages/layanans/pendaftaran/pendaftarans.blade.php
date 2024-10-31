@@ -105,7 +105,15 @@
 
 <script>
 $(document).ready(function () { 
+
     $('#userForm').find('input, select, textarea, button').prop('disabled', true);
+
+    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
 
     $('body').on('click', '.cariPasien', function () {
         var no_rm = $('#no_rm').val();
@@ -200,6 +208,88 @@ $(document).ready(function () {
                     });
                 } else {
                     $('#dokter_id').append('<option value="" selected>Tidak ada dokter</option>');
+                }
+            }
+        });
+    });
+
+    $('#saveBtn').click(function (e) {
+        e.preventDefault();
+        $('#saveBtn').html('Sending..');
+
+        // Reset error messages
+        $('#no_rmError').text('');
+        $('#poli_idError').text('');
+        $('#dokter_idError').text('');
+        $('#tanggal_daftarError').text('');
+        $('#keluhanError').text('');
+
+        $.ajax({
+            data: {
+                no_rm: $('#no_rm').val(),
+                poli_id: $('#poli_id').val(),
+                dokter_id: $('#dokter_id').val(),
+                tanggal_daftar: $('#tanggal_daftar').val(),
+                keluhan: $('#keluhan').val()
+            },
+            url: "{{ route('pendaftarans.store') }}",
+            type: "POST",
+            dataType: 'json',
+            success: function (data) {
+                $('.error').text('');
+                $('#laravel_datatable').DataTable().ajax.reload();
+                $('#saveBtn').html('Save Changes');
+
+                // Tampilkan alert sukses
+                
+                $('#alertPlaceholder').html(`
+                    @component('components.popup.alert', ['type' => 'success', 'message' => 'Pendaftaran berhasil!'])
+                    @endcomponent
+                `);
+
+                //reset form
+                $('#userForm').trigger("reset");
+                $('#FormPasien').trigger("reset");
+                
+                
+            },
+            error: function (xhr) {
+                $('#saveBtn').html('Save Changes');
+
+                if (xhr.status === 421) {
+                    var alertHtml = `
+                        @component('components.popup.alert', ['type' => 'danger', 'message' => 'Pasien sudah terdaftar di poli ini untuk tanggal yang dipilih!'])
+                        @endcomponent
+                    `;
+                    
+                    // Tambahkan alert baru ke dalam placeholder
+                    $('#alertPlaceholder').append(alertHtml);
+
+                } else if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    if (errors.no_rm) {
+                        $('#no_rmError').text(errors.no_rm[0]);
+                    }
+                    if (errors.poli_id) {
+                        $('#poli_idError').text(errors.poli_id[0]);
+                    }
+                    if (errors.dokter_id) {
+                        $('#dokter_idError').text(errors.dokter_id[0]);
+                    }
+                    if (errors.tanggal_daftar) {
+                        $('#tanggal_daftarError').text(errors.tanggal_daftar[0]);
+                    }
+                    if (errors.keluhan) {
+                        $('#keluhanError').text(errors.keluhan[0]);
+                    }
+
+                  
+                    
+                } else {
+                    $('#alertPlaceholder').html(`
+                        @component('components.popup.alert', ['type' => 'danger', 'message' => 'Pendaftaran gagal ditambahkan!'])
+                        @endcomponent
+                    `);
                 }
             }
         });

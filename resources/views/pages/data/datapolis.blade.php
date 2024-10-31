@@ -149,6 +149,8 @@
                             @endcomponent
                         `);
                     }
+
+                    window.location.reload(true);
                 },
                 error: function (xhr) {
                     $('#saveBtn').html('Save Changes');
@@ -170,6 +172,8 @@
                             @endcomponent
                         `);
                     }
+
+                    window.location.reload(true);
                 }
             });
         });
@@ -185,14 +189,19 @@
                 type: 'DELETE',
                 url: "{{ route('datapolis.index') }}/" + user_id,
                 success: function (data) {
+
                     $('#laravel_datatable').DataTable().ajax.reload();
                     $('#confirmDeleteModal').modal('hide');
+                    // document.location.reload(true);
 
                     // Tampilkan alert sukses
                     $('#alertPlaceholder').html(`
                             @component('components.popup.alert', ['type' => 'success', 'message' => 'Obat berhasil dihapus!'])
                             @endcomponent
                         `);
+
+                    window.location.reload(true);
+                    
                 },
                 error: function (xhr) {
                     $('#confirmDeleteModal').modal('hide');

@@ -3,11 +3,13 @@
 use App\Http\Controllers\Data\DataPoliController;
 use App\Http\Controllers\DokterController;
 use App\Http\Controllers\KamarController;
+use App\Http\Controllers\layanan\CekPendaftaranController;
 use App\Http\Controllers\layanan\PendaftaranController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\PoliController;
 use App\Http\Controllers\UserController;
+use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,9 +28,15 @@ Route::resource('data/datapolis', DataPoliController::class);
 
 
 Route::resource('layanans/pendaftarans', PendaftaranController::class);
+Route::resource('layanans/cek-pendaftarans', CekPendaftaranController::class);
+Route::POST('layanans/cek-pendaftarans/getInfoPendaftaran', [CekPendaftaranController::class, 'getInfoPendaftaran'])->name('pendaftarans.cekpendaftaran.getinfopendaftaran');
+
 
 
 
 
 Route::post('users/reset-password', [UserController::class, 'reset_password'])->name('users.reset_password');
 Route::get('data/datapolis/getDokterByPoliId/{poliId}', [DataPoliController::class, 'getDokterByPoliId'])->name('data.datapolis.getDokterByPoliId');
+Route::get('data/data-pendaftarans', [PendaftaranController::class, 'getPendaftarans'])->name('pendaftarans.listpendaftarans');
+
+
