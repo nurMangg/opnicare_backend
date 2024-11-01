@@ -58,10 +58,12 @@
                             </div>
                         </div>
                         <div class="col-sm-offset-2 col-sm-12 mt-3 text-end">
+                            <button type="" class="btn btn-gr" id="cariPendaftaranBarcode" value="scan">Scan Barcode</button>
                             <button type="submit" class="btn btn-gr" id="cariPendaftaran" value="create">Cari Nomor Pendaftaran</button>
                         </div>
                         
                     </form>
+
                 </div>
 
             </div>
@@ -129,6 +131,9 @@
         {{-- Modal loading --}}
         <x-popup.loading />
 
+        {{-- Modal Scanner --}}
+        <x-scanner :form1="$form1" :form2="$form2" :form3="$form3" />
+
         {{-- Modal konfirmasi --}}
         <x-popup.modal_delete_confirmation />
 
@@ -195,6 +200,11 @@
                     $('#cekPendaftaran').trigger("reset");
                     $('#modelHeading').html("{{ $title ?? env('APP_NAME') }}");
                     $('#ajaxModel').modal('show');
+                });
+
+                $('#cariPendaftaranBarcode').click(function () {
+                    $('#ajaxModel').modal('hide');
+                    $('#ajaxScanner').modal('show');
                 });
 
 

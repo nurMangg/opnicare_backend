@@ -23,7 +23,7 @@ class ObatController extends Controller
                 'type' => 'text',
                 'placeholder' => '',
                 'width' => 6,
-                'disabled' => false
+                'disabled' => true
             ),
             array(
                 'label' => 'Foto',
@@ -200,7 +200,7 @@ class ObatController extends Controller
         $medicine = Obat::updateOrCreate(
             ['id' => $request->input('user_id')],
             [
-                'medicine_id' => $request->input('medicine_id') ?? $this->generateUniqueCode($obatKD),
+                'medicine_id' => $request->input('user_id') ? $request->input('user_id') : $this->generateUniqueCode($obatKD),
                 'nama_obat' => $request->input('nama_obat'),
                 'nama_generik' => $request->input('nama_generik'),
                 'kategori' => $request->input('kategori'),
@@ -213,7 +213,7 @@ class ObatController extends Controller
                 'instruksi_penggunaan' => $request->input('instruksi_penggunaan'),
                 'efek_samping' => $request->input('efek_samping'),
                 'instruksi_penyimpanan' => $request->input('instruksi_penyimpanan'),
-                'foto' => $fotoBase64
+                'foto' => $fotoBase64 ? $fotoBase64 : $request->input('foto')
             ]
         );
 
@@ -226,69 +226,18 @@ class ObatController extends Controller
         return response()->json($medicine);
     }
 
-    // Fungsi untuk mengupdate data yang telah diedit
-    public function update(Request $request, $id)
-    {
-
-        // Log::info('Request Data:', $request->all());
-        // dd($request->all());
-        // // Validasi input
-        // $validator = Validator::make($request->all(), [
-        //     'nama_obat' => 'required',
-        //     'nama_generik' => 'required',
-        //     'bentuk_dosis' => 'required',
-        //     'harga' => 'required|numeric',
-        //     'jumlah_stok' => 'required|integer',
-        //     'tanggal_kedaluwarsa' => 'required|date',
-        //     'produsen' => 'required',
-        //     'instruksi_penggunaan' => 'required',
-        //     'efek_samping' => 'required',
-        //     'instruksi_penyimpanan' => 'required',
-        //     'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Menambahkan validasi untuk foto
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-
-        // Mencari obat berdasarkan ID
-        $medicine = Obat::find($id);
-        if (!$medicine) {
-            return response()->json(['error' => 'Medicine not found.'], 404);
-        }
-
-        // Mengolah foto jika ada
-        if ($request->hasFile('foto')) {
-            $fotoBase64 = base64_encode(file_get_contents($request->file('foto')));
-        } else {
-            $fotoBase64 = $medicine->foto; // Menjaga foto sebelumnya jika tidak ada file baru
-        }
-
-        // Memperbarui data obat
-        $medicine->update([
-            'nama_obat' => $request->nama_obat,
-            'nama_generik' => $request->nama_generik,
-            'kategori' => $request->kategori,
-            'bentuk_dosis' => $request->bentuk_dosis,
-            'kekuatan' => $request->kekuatan,
-            'harga' => $request->harga,
-            'jumlah_stok' => $request->jumlah_stok,
-            'tanggal_kedaluwarsa' => $request->tanggal_kedaluwarsa,
-            'produsen' => $request->produsen,
-            'instruksi_penggunaan' => $request->instruksi_penggunaan,
-            'efek_samping' => $request->efek_samping,
-            'instruksi_penyimpanan' => $request->instruksi_penyimpanan,
-            'foto' => $fotoBase64 // Mengupdate foto
-        ]);
-
-        return response()->json(['success' => 'Medicine updated successfully.']);
-    }
-
-
     // Fungsi untuk menghapus data
     public function destroy($id)
     {
         Obat::find($id)->delete();
         return response()->json(['success' => 'Medicine deleted successfully.']);
     }
+
+    public function getObat()
+    {
+        $Obat = Obat::all();
+        return response()->json($Obat);
+    }
+
+
 }

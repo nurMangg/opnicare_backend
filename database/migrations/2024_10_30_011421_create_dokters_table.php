@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('kewarganegaraan')->nullable();
             $table->string('agama')->nullable();
             $table->string('pendidikan')->nullable();
+            $table->mediumText('image')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
         });

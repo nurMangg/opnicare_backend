@@ -198,7 +198,7 @@
             $.ajax({
                 data: formData,
                 url: "{{ route('obats.store') }}",
-                type: requestType,
+                type: 'POST',
                 dataType: 'json',
                 processData: false,
                 contentType: false,

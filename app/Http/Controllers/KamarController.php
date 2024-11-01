@@ -152,4 +152,10 @@ class KamarController extends Controller
         Kamar::find($id)->delete();
         return response()->json(['success' => 'Kamar deleted successfully.']);
     }
+
+    public function getKamar()
+    {
+        $Kamar = Kamar::all();
+        return response()->json($Kamar);
+    }
 }

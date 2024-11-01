@@ -21,6 +21,7 @@ class Dokter extends Model
         'kewarganegaraan',
         'agama',
         'pendidikan',
+        'image',
         'status',
     ];
 }

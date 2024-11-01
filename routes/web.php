@@ -16,11 +16,22 @@ Route::get('/', function () {
     return view('pages.dashboard');
 })->name('dashboard');
 
+Route::get('/scan', function () {
+    return view('scan');
+});
+
 Route::resource('masters/users', UserController::class);
 Route::resource('masters/pasiens', PasienController::class);
+
 Route::resource('masters/kamars', KamarController::class);
+Route::get('masters/kamars/api/getKamar', [KamarController::class, 'getKamar'])->name('kamars.getkamars');
+
 Route::resource('masters/dokters', DokterController::class);
+Route::get('masters/dokters/api/getDokter', [DokterController::class, 'getDokter'])->name('dokters.getdokter');
+
 Route::resource('masters/obats', ObatController::class);
+Route::get('masters/obats/api/getObat', [ObatController::class, 'getObat'])->name('obats.getobat');
+
 Route::resource('masters/polis', PoliController::class);
 
 Route::resource('data/datapolis', DataPoliController::class);

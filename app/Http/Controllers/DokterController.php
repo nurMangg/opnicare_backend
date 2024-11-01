@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dokter;
+use App\Models\Poli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -112,12 +113,30 @@ class DokterController extends Controller
                 'placeholder' => '',
             ),
             array(
+                'label' => 'Upload Foto',
+                'field' => 'image',
+                'width' => 12,
+                'type' => 'file',
+                'placeholder' => 'Masukkan Foto',
+                'required' => false
+            ),
+            array(
                 'label' => 'Spesialisasi',
                 'field' => 'spesialisasi',
                 'width' => 6,
-                'type' => 'text',
+                'type' => 'select',
                 'placeholder' => '',
-                'required' => true
+                'required' => true,
+                'options' => [
+                    'Dokter Umum' => 'Dokter Umum',
+                    'Dokter Anak' => 'Dokter Anak',
+                    'Dokter Bedah' => 'Dokter Bedah',
+                    'Dokter Gigi' => 'Dokter Gigi',
+                    'Dokter Jantung' => 'Dokter Jantung',
+                    'Dokter Kulit' => 'Dokter Kulit',
+                    'Dokter Mata' => 'Dokter Mata',
+                    'Dokter THT' => 'Dokter THT'
+                ],
             ),
             array(
                 'label' => 'Status',
@@ -149,6 +168,7 @@ class DokterController extends Controller
                             return $btn;
                     })
                     ->rawColumns(['action'])
+                    
                     ->make(true);
         }
 
@@ -186,8 +206,15 @@ class DokterController extends Controller
                                 ->count();
         $dokterKD = str_pad($dokterCount + 1, 3, '0', STR_PAD_LEFT);
 
+        $fotoBase64 = null;
+        if ($request->hasFile('image')) {
+            $fotoBase64 = base64_encode(file_get_contents($request->file('image')->getRealPath()));
+        }
+
+        $userimage = Dokter::where('id', $request->user_id)->first();
+
         $user = Dokter::updateOrCreate(
-            ['id' => $request->id],
+            ['id' => $request->user_id],
             ['nama' => $request->nama,
              'nik' => $request->nik, 
              'alamat' => $request->alamat, 
@@ -199,7 +226,8 @@ class DokterController extends Controller
              'kewarganegaraan' => $request->kewarganegaraan, 
              'agama' => $request->agama, 
              'pendidikan' => $request->pendidikan, 
-             'spesialisasi' => $request->spesialisasi, 
+             'spesialisasi' => $request->spesialisasi,
+             'image' => $fotoBase64 ? $fotoBase64 : $userimage->image, 
              'status' => $request->status, 
              'kd_dokter' => $this->generateUniqueCode($dokterKD)
              ]
@@ -210,8 +238,8 @@ class DokterController extends Controller
 
     public function edit($id)
     {
-        $user = Dokter::find($id);
-        return response()->json($user);
+        $dokter = Dokter::find($id);
+        return response()->json($dokter);
     }
 
     // Fungsi untuk mengupdate data yang telah diedit
@@ -231,6 +259,11 @@ class DokterController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        $fotoBase64 = null;
+        if ($request->hasFile('image')) {
+            $fotoBase64 = base64_encode(file_get_contents($request->file('image')->getRealPath()));
+        }
+
         $user = Dokter::find($id);
         $user->update(
             [
@@ -244,7 +277,8 @@ class DokterController extends Controller
                 'kewarganegaraan' => $request->kewarganegaraan, 
                 'agama' => $request->agama, 
                 'pendidikan' => $request->pendidikan, 
-                'spesialisasi' => $request->spesialisasi, 
+                'spesialisasi' => $request->spesialisasi,
+                'image' => $fotoBase64, 
                 'status' => $request->status, 
             ]
     );
@@ -257,5 +291,11 @@ class DokterController extends Controller
     {
         Dokter::find($id)->delete();
         return response()->json(['success' => 'User deleted successfully.']);
+    }
+
+    public function getDokter()
+    {
+        $dokter = Dokter::where('status', 'Aktif')->get();
+        return response()->json($dokter);
     }
 }

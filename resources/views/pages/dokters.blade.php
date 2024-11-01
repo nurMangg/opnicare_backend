@@ -49,6 +49,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>Foto Dokter</th>
                                 <th>Kode Dokter</th>
                                 <th>Nama Dokter</th>
                                 <th>Alamat</th>
@@ -94,6 +95,13 @@
             columns: [{
                     data: 'id',
                     name: 'id'
+                },
+                {
+                    data: 'image',
+                    name: 'image',
+                    render: function(data, type, row) {
+                        return '<div style="display: flex; align-items: center; justify-content: center;"><img src="data:image/png;base64,' + data + '" alt="Image" style="width: 50px; height: 50px;" /></div>';
+                    }
                 },
                 {
                     data: 'kd_dokter',
@@ -202,19 +210,17 @@
             $('#jkError').text('');
             $('#spesialisasiError').text('');
 
-
             var actionType = $(this).val();
-            var url = actionType === "create-user" ? "{{ route('dokters.store') }}" :
-                "{{ route('dokters.index') }}/" + $('#user_id').val();
+            var formData = new FormData($('#userForm')[0]);
 
-            // Tentukan jenis permintaan (POST atau PUT)
-            var requestType = actionType === "create-user" ? "POST" : "PUT";
 
             $.ajax({
-                data: $('#userForm').serialize(),
-                url: url,
-                type: requestType,
+                data: formData,
+                url: "{{ route('dokters.store') }}",
+                type: "POST",
                 dataType: 'json',
+                processData: false,
+                contentType: false,
                 success: function (data) {
                     $('#userForm').trigger("reset");
                     $('#ajaxModel').modal('hide');
@@ -224,12 +230,12 @@
                     // Tampilkan alert sukses
                     if (actionType === "create-user") {
                         $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'User baru ditambahkan!'])
+                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Dokter baru ditambahkan!'])
                             @endcomponent
                         `);
                     } else {
                         $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'User diperbarui!'])
+                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Dokter diperbarui!'])
                             @endcomponent
                         `);
                     }
@@ -263,7 +269,7 @@
                         }
                     } else {
                         $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'User gagal ditambahkan!'])
+                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'Dokter gagal ditambahkan!'])
                             @endcomponent
                         `);
                     }
@@ -287,7 +293,7 @@
 
                     // Tampilkan alert sukses
                     $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'User berhasil dihapus!'])
+                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Dokter berhasil dihapus!'])
                             @endcomponent
                         `);
                 },
@@ -296,7 +302,7 @@
 
                     // Tampilkan alert error
                     $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'User gagal dihapus!'])
+                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'Dokter gagal dihapus!'])
                             @endcomponent
                         `);
                 }
