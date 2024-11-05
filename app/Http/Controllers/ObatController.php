@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Obat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -217,6 +218,9 @@ class ObatController extends Controller
             ]
         );
 
+
+        $this->storeRiwayat(Auth::user()->id, "msobat", "INSERT/UPDATE", json_encode($medicine));
+
         return response()->json(['success' => 'Medicine berhasil disimpan.']);
     }
 
@@ -229,6 +233,9 @@ class ObatController extends Controller
     // Fungsi untuk menghapus data
     public function destroy($id)
     {
+        $obat = Obat::find($id);
+        $this->storeRiwayat(Auth::user()->id, "msobat", "DELETE", json_encode($obat));
+        
         Obat::find($id)->delete();
         return response()->json(['success' => 'Medicine deleted successfully.']);
     }

@@ -7,6 +7,7 @@ use App\Models\DataPoli;
 use App\Models\Dokter;
 use App\Models\Poli;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class DataPoliController extends Controller
@@ -76,13 +77,16 @@ class DataPoliController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $kamar = DataPoli::updateOrCreate(
+        $poli = DataPoli::updateOrCreate(
             ['id' => $request->id],
             [
                 'poli_id' => $request->poli_id,
                 'dokter_id' => $request->dokter_id,
             ]
         );
+
+        $this->storeRiwayat(Auth::user()->id, "data_poli", "INSERT", json_encode($poli));
+
 
         return response()->json(['success' => 'Data Poli berhasil disimpan.']);
     }
@@ -112,13 +116,19 @@ class DataPoliController extends Controller
             'dokter_id' => $request->dokter_id,
         ]);
 
+        $this->storeRiwayat(Auth::user()->id, "data_poli", "UPDATE", json_encode($poli));
+
+
         return response()->json(['success' => 'Data Poli updated successfully.']);
     }
 
     // Fungsi untuk menghapus data
     public function destroy($id)
     {
-        DataPoli::find($id)->delete();
+        $poli = DataPoli::find($id);
+        $this->storeRiwayat(Auth::user()->id, "data_poli", "DELETE", json_encode($poli));
+
+        $poli->delete();
         return response()->json(['success' => 'Data Poli deleted successfully.']);
     }
 

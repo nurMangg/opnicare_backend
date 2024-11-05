@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DataPoli;
 use App\Models\Poli;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PoliController extends Controller
@@ -84,6 +85,9 @@ class PoliController extends Controller
                 'deskripsi' => $request->deskripsi,
             ]
         );
+        
+        $this->storeRiwayat(Auth::user()->id, "mspoli", "INSERT", json_encode($poli));
+
 
         return response()->json(['success' => 'Poli berhasil disimpan.']);
     }
@@ -115,6 +119,9 @@ class PoliController extends Controller
             ]
         );
 
+        $this->storeRiwayat(Auth::user()->id, "mspoli", "UPDATE", json_encode($poli));
+
+
         return response()->json(['success' => 'Poli updated successfully.']);
     }
 
@@ -122,6 +129,9 @@ class PoliController extends Controller
     public function destroy($id)
     {
         $poli = Poli::find($id);
+
+        $this->storeRiwayat(Auth::user()->id, "mspoli", "DELETE", json_encode($poli));
+        
         $datapoli = DataPoli::where('poli_id', $id)->get();
         foreach ($datapoli as $dp) {
             $dp->delete();

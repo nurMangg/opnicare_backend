@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -74,6 +75,8 @@ class UserController extends Controller
             ['name' => $request->name, 'email' => $request->email, 'password' => $password]
         );
 
+        $this->storeRiwayat(Auth::user()->id, "User", "INSERT", json_encode($user));
+
         return response()->json(['success' => 'User berhasil disimpan.']);
     }
 
@@ -101,6 +104,9 @@ class UserController extends Controller
             'email' => $request->email,
         ]);
 
+        $this->storeRiwayat(Auth::user()->id, "User", "UPDATE", json_encode($user));
+
+
         return response()->json(['success' => 'User updated successfully.']);
     }
 
@@ -118,6 +124,9 @@ class UserController extends Controller
     if ($user) {
         $user->password = bcrypt('password');
         $user->save();
+
+        $this->storeRiwayat(Auth::user()->id, "User", "RESET PASSWORD", json_encode($user));
+
         return response()->json(['success' => true]);
     } else {
         return response()->json(['success' => false]);

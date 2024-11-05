@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Dokter;
 use App\Models\Poli;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class DokterController extends Controller
@@ -233,6 +234,8 @@ class DokterController extends Controller
              ]
         );
 
+        $this->storeRiwayat(Auth::user()->id, "msdokter", "INSERT/UPDATE", json_encode($user));        
+
         return response()->json(['success' => 'User berhasil disimpan.']);
     }
 
@@ -288,7 +291,8 @@ class DokterController extends Controller
 
     // Fungsi untuk menghapus data
     public function destroy($id)
-    {
+    {   
+        $this->storeRiwayat(Auth::user()->id, "msdokter", "DELETE", json_encode(Dokter::find($id)));
         Dokter::find($id)->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }

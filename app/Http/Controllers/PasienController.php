@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pasien;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PasienController extends Controller
@@ -193,6 +194,8 @@ class PasienController extends Controller
              ]
         );
 
+        $this->storeRiwayat(Auth::user()->id, "mspasien", "INSERT", json_encode($user));
+
         return response()->json(['success' => 'User berhasil disimpan.']);
     }
 
@@ -233,7 +236,9 @@ class PasienController extends Controller
                 'pendidikan' => $request->pendidikan, 
                 'status' => $request->status, 
             ]
-    );
+        );
+
+        $this->storeRiwayat(Auth::user()->id, "mspasien", "UPDATE", json_encode($user));
 
         return response()->json(['success' => 'User updated successfully.']);
     }
@@ -241,6 +246,9 @@ class PasienController extends Controller
     // Fungsi untuk menghapus data
     public function destroy($id)
     {
+        $user = Pasien::find($id);
+        $this->storeRiwayat(Auth::user()->id, "mspasien", "DELETE", json_encode($user));
+        
         Pasien::find($id)->delete();
         return response()->json(['success' => 'User deleted successfully.']);
     }

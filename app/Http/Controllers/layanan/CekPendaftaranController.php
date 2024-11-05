@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CekPendaftaranController extends Controller
@@ -258,6 +259,9 @@ class CekPendaftaranController extends Controller
         $tanggal_sekarang = Carbon::now()->format('Y-m-d');
         if ($pendaftaran->tanggal_daftar == $tanggal_sekarang) {
             $pendaftaran->update(['status' => 'Dalam Antrian']);
+
+            $this->storeRiwayat(Auth::user()->id, "pendaftaran", "UPDATEANTRIAN", json_encode($pendaftaran));
+
 
             return response()->json(['message' => 'Pendaftaran Berhasil'], 200);
         } else {

@@ -9,6 +9,7 @@ use App\Models\Pasien;
 use App\Models\Pendaftaran;
 use App\Models\Poli;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class PendaftaranController extends Controller
@@ -210,6 +211,8 @@ class PendaftaranController extends Controller
             'keluhan' => $request->keluhan,
             'status' => 'Terdaftar'
         ]);
+
+        $this->storeRiwayat(Auth::user()->id, "pendaftaran", "INSERT", json_encode($pendaftaran));
 
         return response()->json(['success' => 'Pendaftaran berhasil disimpan.']);
     }

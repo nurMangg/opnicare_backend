@@ -1,3 +1,10 @@
+<?php
+
+    use App\Models\Roles;
+    $role = Roles::where('role_id', Auth::user()->role_id)->first();
+
+    $web = App\Models\SettingWeb::first();
+?>
 <!doctype html>
 <!--
 * Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
@@ -15,7 +22,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Opnicare System') }}</title>
+    <title>{{ $web->site_name ?? env('APP_NAME') }}</title>
+    <link rel="shortcut icon" href="{{ $web->favicon ? 'data:image/png;base64,' . $web->favicon : asset('dist/img/icon.png') }}" type="image/x-icon">
+
 
     <!-- CSS files -->
     <link href="{{ asset('dist/css/tabler.min.css?1692870487') }}" rel="stylesheet" />
@@ -135,7 +144,7 @@
     <script src="{{ asset('dist/js/demo-theme.min.js') }}"></script>
     <div class="page">
         <!-- Sidebar -->
-        <aside class="navbar navbar-vertical navbar-expand-lg navbar-light bg-white shadow-sm">
+        <aside class="navbar navbar-vertical navbar-expand-lg navbar-light shadow-sm">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
                     aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,7 +152,7 @@
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark">
                     <a href="{{ route('dashboard') }}">
-                        <img src="{{ asset('dist/img/opnicare.png') }}" width="110" height="32" alt="Opni Care" class="navbar-brand-image">
+                        <img src="{{ $web->logo ? 'data:image/png;base64,' . $web->logo : asset('dist/img/opnicare.png') }}" width="110" height="32" alt="Opni Care" class="navbar-brand-image">
                     </a>
                 </h1>
                 <div class="collapse navbar-collapse" id="sidebar-menu">
@@ -181,6 +190,8 @@
                                     <div class="dropdown-menu-columns">
                                             <a class="dropdown-item {{ Route::is('pendaftarans.index') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
                                             <a class="dropdown-item {{ Route::is('cek-pendaftarans.index') ? 'active' : '' }}" href="{{ route('cek-pendaftarans.index') }}">Cek Pendaftaran Pasien</a>
+                                            <a class="dropdown-item {{ Route::is('pemeriksaan-pasien.*') ? 'active' : '' }}" href="{{ route('pemeriksaan-pasien.index') }}">Pemeriksaan Pasien</a>
+
 
                                     </div>
                                 </div>
@@ -202,6 +213,8 @@
                                     <div class="dropdown-menu-columns">
                                             <a class="dropdown-item {{ Route::is('datapolis.*') ? 'active' : '' }}" href="{{ route('datapolis.index') }}">Data Poli</a>
                                             <a class="dropdown-item {{ Route::is('pendaftarans.listpendaftarans') ? 'active' : '' }}" href="{{ route('pendaftarans.listpendaftarans') }}">Data Pendaftaran</a>
+                                            <a class="dropdown-item {{ Route::is('datarekammedis.*') ? 'active' : '' }}" href="{{ route('datarekammedis.index') }}">Data Rekam Medis</a>
+
 
                                     </div>
                                 </div>
@@ -232,6 +245,28 @@
                                             <a class="dropdown-item {{ Route::is('obats.*') ? 'active' : '' }}" href="{{ route('obats.index') }}">Obat</a>
                                             <a class="dropdown-item {{ Route::is('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Pengguna</a>
                                         
+                                    </div>
+                                </div>
+                        </li>
+
+                        <li class="nav-item dropdown {{ request()->is('settins/*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
+                               data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M10.325 4.5a2.5 2.5 0 0 1 4.671 0l2.674 2.677a11 11 0 0 1 0 9.701l-2.674 2.678A2.5 2.5 0 0 1 10.325 15h-4.65a2.5 2.5 0 1 1 0 -5h4.65"/>
+                                </svg>
+                                <span class="nav-link-title">Settings</span>
+                            </a>
+                                <div class="dropdown-menu show">
+                                    <div class="dropdown-menu-columns">
+                                            <a class="dropdown-item {{ Route::is('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Setting Web</a>
+                                            <a class="dropdown-item {{ Route::is('setting-pengguna.*') ? 'active' : '' }}" href="{{ route('setting-pengguna.index') }}">Setting Pengguna</a>
+                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}" disabled>Riwayat Pengguna</a>
+
+
                                     </div>
                                 </div>
                         </li>
@@ -399,8 +434,8 @@
                             <span class="avatar avatar-sm"
                                 style="background-image: url('{{ asset('dist/img/rohman.png') }}')"></span>
                             <div class="d-none d-xl-block ps-2">
-                                <div>Nur Rohman</div>
-                                <div class="mt-1 small text-secondary">Direktur</div>
+                                <div>{{ Auth::user()->name ?? 'Unknown' }}</div>
+                                <div class="mt-1 small text-secondary">{{ $role->role_name }}</div>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
@@ -409,7 +444,15 @@
                             <a href="#" class="dropdown-item">Feedback</a>
                             <div class="dropdown-divider"></div>
                             <a href="./settings.html" class="dropdown-item">Settings</a>
-                            <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+            
+                                <a href="{{ route('logout') }}" class="dropdown-item"
+                                        onclick="event.preventDefault();
+                                                    this.closest('form').submit();">
+                                    {{ __('Log Out') }}
+                                </a>
+                            </form>
                         </div>
                     </div>
                 </div>

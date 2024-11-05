@@ -50,6 +50,7 @@
                             <th>ID</th>
                             <th>No. Rekam Medis</th>
                             <th>NIK</th>
+                            <th>Nama Pasien</th>
                             <th>Tanggal Lahir</th>
                             <th>Jenis Kelamin</th>
                             <th>Agama</th>
@@ -97,6 +98,10 @@
                         {
                             data: 'nik',
                             name: 'nik'
+                        },
+                        {
+                            data: 'nama_pasien',
+                            name: 'nama_pasien'
                         },
                         {
                             data: 'tanggal_lahir',

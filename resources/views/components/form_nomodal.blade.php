@@ -3,7 +3,7 @@
     <input type="hidden" name="user_id" id="user_id">
     @foreach ($form as $field)
         <div class="form-group mb-3 col-md-{{ $field['width'] ?? 12 }}">
-            <label for="{{ $field['field'] }}" class="control-label">
+            <label for="{{ $field['field'] }}" class="control-label" {{ $field['hidden'] ?? false ? 'hidden' : '' }}>
                 {{ $field['label'] }}
                 @if ($field['required'] ?? false)
                     <span class="text-danger">*</span>
@@ -29,7 +29,7 @@
                     @endforeach
                 </select>
             @else
-                <input type="text" class="form-control" id="{{ $field['field'] }}" name="{{ $field['field'] }}" placeholder="{{ $field['placeholder'] }}" {{ $field['required'] ?? false ? 'required' : '' }} {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
+                <input type="text" class="form-control" id="{{ $field['field'] }}" name="{{ $field['field'] }}" placeholder="{{ $field['placeholder'] }}" {{ $field['required'] ?? false ? 'required' : '' }} {{ $field['disabled'] ?? false ? 'disabled' : '' }} {{ $field['hidden'] ?? false ? 'hidden' : '' }}>
             @endif
             <span class="text-danger" id="{{ $field['field'] }}Error"></span>
         </div>

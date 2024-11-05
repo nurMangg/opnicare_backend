@@ -55,6 +55,8 @@
                         },
                         error: function (xhr) {
                             $('#cariPendaftaran').html('Save Changes');
+                            $('#ajaxModel').modal('hide');
+                            $('#ajaxScanner').modal('hide');
 
                             // Tampilkan pesan error
                             if (xhr.status === 422) {

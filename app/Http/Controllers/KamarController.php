@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kamar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class KamarController extends Controller
@@ -109,6 +110,8 @@ class KamarController extends Controller
             ]
         );
 
+        $this->storeRiwayat(Auth::user()->id, "mskamar", "INSERT", json_encode($kamar));
+
         return response()->json(['success' => 'Kamar berhasil disimpan.']);
     }
 
@@ -143,12 +146,15 @@ class KamarController extends Controller
             'status' => $request->status,
         ]);
 
+        $this->storeRiwayat(Auth::user()->id, "mskamar", "UPDATE", json_encode($kamar));
+
         return response()->json(['success' => 'Kamar updated successfully.']);
     }
 
     // Fungsi untuk menghapus data
     public function destroy($id)
-    {
+    {   
+        $this->storeRiwayat(Auth::user()->id, "mskamar", "DELETE", json_encode(Kamar::find($id)));
         Kamar::find($id)->delete();
         return response()->json(['success' => 'Kamar deleted successfully.']);
     }

@@ -134,6 +134,7 @@
             scrollX: true,
 
         });
+        
     });
 
 </script>
