@@ -113,12 +113,12 @@
                                 'Terdaftar' + '</span>';
                         } else if (data == 'Dalam Antrian') {
                             return '<span class="badge bg-warning text-white">' +
-                                'Menunggu' + '</span>';
+                                'Dalam Antrian' + '</span>';
                         } else if (data == 'Selesai') {
                             return '<span class="badge bg-success text-white">' +
-                                'Menunggu' + '</span>';
+                                'Selesai' + '</span>';
                         } else {
-                            return '<span class="badge bg-warning">' + 'Belum diatur' +
+                            return '<span class="badge bg-danger text-white">' + 'Gagal' +
                                 '</span>';
                         }
                     }

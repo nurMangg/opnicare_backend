@@ -36,6 +36,7 @@
                             <th>Table</th>
                             <th>Aksi</th>
                             <th>Keterangan</th>
+                            <th>Waktu</th>
                         </tr>
                     </thead>
                 </table>
@@ -75,6 +76,10 @@
                 { data: 'table', name: 'table' },
                 { data: 'aksi', name: 'aksi' },
                 { data: 'keterangan', name: 'keterangan' },
+                { 
+                    data: 'created_at', 
+                    name: 'created_at',
+                },
             ],
             responsive: true,
             scrollX: true,

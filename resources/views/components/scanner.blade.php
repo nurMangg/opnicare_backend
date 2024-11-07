@@ -17,74 +17,96 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-    function onScanSuccess(decodedText, decodedResult) {
-        // Tampilkan hasil yang dipindai
-        // console.log(`Code matched = ${decodedText}`, decodedResult);
-        $.ajax({
-                        url: "{{ route('pendaftarans.cekpendaftaran.getinfopendaftaran') }}",
-                        type: "POST",
-                        dataType: 'json',
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            id_pendaftaran: decodedText
-                        },
-                        success: function (data) {
-                            $('#cekPendaftaran').trigger("reset");
-                            $('#ajaxModel').modal('hide');
-                            $('#ajaxScanner').modal('hide');
-                            $('#cariPendaftaran').html('Save Changes');
+    $(document).ready(function () {
+        let html5QrcodeScanner;
 
-                            @foreach ($form1 as $item)
-                                $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
-                            @endforeach
+        // Fungsi untuk memulai scanner
+        function startScanner() {
+            html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 300 });
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
 
-                            @foreach ($form2 as $item)
-                                $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
-                            @endforeach
+        // Fungsi untuk menghentikan scanner
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().then(() => {
+                    console.log("Scanner stopped.");
+                }).catch(error => {
+                    console.error("Failed to stop scanner:", error);
+                });
+            }
+        }
 
-                            @foreach ($form3 as $item)
-                                $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
-                            @endforeach
+        // Callback saat QR berhasil discan
+        function onScanSuccess(decodedText, decodedResult) {
+            $.ajax({
+                url: "{{ route('pendaftarans.cekpendaftaran.getinfopendaftaran') }}",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id_pendaftaran: decodedText
+                },
+                success: function (data) {
+                    $('#cekPendaftaran').trigger("reset");
+                    $('#ajaxModel').modal('hide');
+                    $('#ajaxScanner').modal('hide');
+                    $('#cariPendaftaran').html('Save Changes');
 
-                            // Tampilkan alert sukses
-                            
-                                $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Pencarian berhasil!'])
-                            @endcomponent`)
-            
-                        },
-                        error: function (xhr) {
-                            $('#cariPendaftaran').html('Save Changes');
-                            $('#ajaxModel').modal('hide');
-                            $('#ajaxScanner').modal('hide');
+                    @foreach ($form1 as $item)
+                        $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
+                    @endforeach
 
-                            // Tampilkan pesan error
-                            if (xhr.status === 422) {
-                                $('#alertPlaceholder').html(`
+                    @foreach ($form2 as $item)
+                        $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
+                    @endforeach
+
+                    @foreach ($form3 as $item)
+                        $('#{{ $item['field'] }}').val(data.{{ $item['field'] }});
+                    @endforeach
+
+                    $('#alertPlaceholder').html(`
+                        @component('components.popup.alert', ['type' => 'success', 'message' => 'Pencarian berhasil!'])
+                        @endcomponent`);
+
+                    // Stop the QR code scanner
+                    stopScanner();
+                },
+                error: function (xhr) {
+                    $('#cariPendaftaran').html('Save Changes');
+                    $('#ajaxModel').modal('hide');
+                    $('#ajaxScanner').modal('hide');
+
+                    if (xhr.status === 422) {
+                        $('#alertPlaceholder').html(`
                             @component('components.popup.alert', ['type' => 'danger', 'message' => 'Kode QR Tidak Valid!'])
-                            @endcomponent
-                                `);
-                            } else {
-                                $('#alertPlaceholder').html(`
+                            @endcomponent`);
+                    } else {
+                        $('#alertPlaceholder').html(`
                             @component('components.popup.alert', ['type' => 'danger', 'message' => 'Pencarian gagal! Cek kembali Nomor Pendaftarannya'])
-                            @endcomponent
-                                `);
-                            }
-                        }
-                    });
+                            @endcomponent`);
+                    }
 
-        // Anda dapat mengirim hasil ini ke Laravel dengan AJAX
-        // alert(`Hasil QR Code: ${decodedText}`);
-    }
+                    // Stop the QR code scanner on error
+                    stopScanner();
+                }
+            });
+        }
 
-    function onScanFailure(error) {
-        // Handle scan failure
-        console.warn(`QR Code scan failed. Error: ${error}`);
-    }
+        // Callback saat scan QR gagal
+        function onScanFailure(error) {
+            console.warn(`QR Code scan failed. Error: ${error}`);
+        }
 
-    // Inisialisasi pemindai QR Code
-    let html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader", { fps: 10, qrbox: 300 });
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        // Event listener untuk modal
+        $('#ajaxScanner').on('shown.bs.modal', function () {
+            startScanner(); // Mulai scanner saat modal dibuka
+        });
+
+        $('#ajaxScanner').on('hidden.bs.modal', function () {
+            stopScanner(); // Hentikan scanner saat modal ditutup
+        });
+    });
 </script>
+
 

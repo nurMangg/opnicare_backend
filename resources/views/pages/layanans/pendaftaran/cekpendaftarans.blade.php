@@ -267,10 +267,7 @@
                     });
                 });
 
-                
-            });
-
-            $('#confirmBtn').click(function (e) {
+                $('#confirmBtn').click(function (e) {
                 e.preventDefault();
                 $('#confirmBtn').html('Sending..');
 
@@ -325,6 +322,11 @@
                     $('#alertPlaceholder').append(error);
                 }
             });
+
+                
+            });
+
+            
 
         </script>
         @endsection
