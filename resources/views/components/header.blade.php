@@ -23,7 +23,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $web->site_name ?? env('APP_NAME') }}</title>
-    <link rel="shortcut icon" href="{{ $web->favicon ? 'data:image/png;base64,' . $web->favicon : asset('dist/img/icon.png') }}" type="image/x-icon">
+    @if(isset($web) && $web->favicon)
+        <link rel="shortcut icon" href="data:image/png;base64,{{ $web->favicon }}" type="image/x-icon">
+    @else
+        <link rel="shortcut icon" href="{{ asset('dist/img/icon.png') }}" type="image/x-icon">
+    @endif
 
     <link rel="stylesheet" type="text/css" href="/DataTables-2.1.7/extensions/Editor-2.3.2/css/editor.bootstrap.css">
  
@@ -168,7 +172,11 @@
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark">
                     <a href="{{ route('dashboard') }}">
-                        <img src="{{ $web->logo ? 'data:image/png;base64,' . $web->logo : asset('dist/img/opnicare.png') }}" width="150" height="48" alt="Opni Care" class="navbar-brand-image">
+                        @if(isset($web) && $web->logo)
+                            <img src="data:image/png;base64,{{ $web->logo }}" width="150" height="48" alt="Opni Care" class="navbar-brand-image">
+                        @else
+                            <img src="{{ asset('dist/img/opnicare.png') }}" width="150" height="48" alt="Opni Care" class="navbar-brand-image">
+                        @endif
                     </a>
                 </h1>
                 <div class="collapse navbar-collapse" id="sidebar-menu">

@@ -46,12 +46,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#site_name').val('{{ $web->site_name }}');
-        $('#alamat').val('{{ $web->alamat }}');
-        $('#email').val('{{ $web->email }}');
-        $('#phone').val('{{ $web->phone }}');
-        $('#description').val('{{ $web->description }}');
-        $('#address').val('{{ $web->address }}');
+        $('#site_name').val('{{ $web ? $web->site_name : '' }}');
+        $('#alamat').val('{{ $web ? $web->alamat : '' }}');
+        $('#email').val('{{ $web ? $web->email : '' }}');
+        $('#phone').val('{{ $web ? $web->phone : '' }}');
+        $('#description').val('{{ $web ? $web->description : '' }}');
+        $('#address').val('{{ $web ? $web->address : '' }}');
         
 
 

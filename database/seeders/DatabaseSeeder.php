@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Roles;
+use App\Models\SettingWeb;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,6 +27,16 @@ class DatabaseSeeder extends Seeder
 
         Roles::create([
             'role_name' => 'admin',
+        ]);
+
+        SettingWeb::create([
+            'favicon' => 'null',
+            'logo' => 'null',
+            'description' => 'Ini adalah SIM KLINIK Lite',
+            'site_name' => 'Mini Opnicare System',
+            'email' => 'rohmanuyeoke@gmail.com',
+            'phone' => '6285713050749',
+            'address' => 'Pesarean, Pagerbarang, Tegal',
         ]);
     }
 }
