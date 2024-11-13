@@ -11,6 +11,7 @@ use App\Http\Controllers\KamarController;
 use App\Http\Controllers\layanan\CekPendaftaranController;
 use App\Http\Controllers\layanan\PemeriksaanPasienController;
 use App\Http\Controllers\layanan\PendaftaranController;
+use App\Http\Controllers\layanan\TransaksiController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\PoliController;
@@ -39,14 +40,24 @@ Route::post('api/login', [ApiController::class, 'login'])
     ->middleware('throttle:5,1')
     ->name('api.login');
 
+Route::post('/api/tambah-obat', [ApiController::class, 'tambahObat'])->name('api.tambahObat');
 
-Route::middleware('auth:sanctum')->get('masters/kamars/api/getKamar', [KamarController::class, 'getKamar'])->name('kamars.getkamars');
-Route::middleware('auth:sanctum')->get('masters/dokters/api/getDokter', [DokterController::class, 'getDokter'])->name('dokters.getdokter');
-Route::middleware('auth:sanctum')->get('masters/obats/api/getObat', [ObatController::class, 'getObat'])->name('obats.getobat');
-Route::middleware('auth:sanctum')->post('api/send-data-pendaftaran', [ApiController::class, 'sendDataPendaftaran'])->name('api.senddatapendaftaran');
-Route::middleware('auth:sanctum')->get('/api/user', [ApiController::class, 'getUserData']);
-Route::middleware('auth:sanctum')->get('api/get-riwayat-pendaftaran/{no_rm}', [ApiController::class, 'getRiwayatPendaftaran'])->name('api.getriwayatpendaftaran');
 
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('api/getKamar', [KamarController::class, 'getKamar'])->name('kamars.getkamars');
+    Route::get('api/getDokter', [DokterController::class, 'getDokter'])->name('dokters.getdokter');
+    Route::get('api/getObat', [ObatController::class, 'getObat'])->name('obats.getobat');
+    Route::post('api/send-data-pendaftaran', [ApiController::class, 'sendDataPendaftaran'])->name('api.senddatapendaftaran');
+    Route::get('/api/user', [ApiController::class, 'getUserData']);
+    Route::get('api/get-riwayat-pendaftaran/{no_rm}', [ApiController::class, 'getRiwayatPendaftaran'])->name('api.getriwayatpendaftaran');
+    Route::post('api/refresh-token', [ApiController::class, 'refreshToken'])->name('api.refreshtoken');
+    Route::post('api/logout', [ApiController::class, 'logout'])->name('api.logout');
+    Route::post('api/send-keluhan', [ApiController::class, 'sendKeluhan'])->name('api.sendkeluhan');
+    Route::get('api/get-data-keranjang/{no_rm}', [ApiController::class, 'getDataKeranjang'])->name('api.getdatakeranjang');
+    Route::post('api/transaksi-obat', [ApiController::class, 'transaksiObat'])->name('api.transaksiobat');
+    
+});
 
 Route::middleware('auth')->group(function () {
     Route::resource('masters/users', UserController::class);
@@ -66,6 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('setting/settings', SettingController::class);
     Route::resource('setting/setting-pengguna', SettingPenggunaController::class);
     Route::resource('setting/riwayats', RiwayatController::class);
+
+    Route::resource('layanans/transaksis', TransaksiController::class);
 
     Route::resource('layanans/pendaftarans', PendaftaranController::class);
     Route::resource('layanans/cek-pendaftarans', CekPendaftaranController::class);

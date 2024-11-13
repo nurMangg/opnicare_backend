@@ -25,6 +25,9 @@
     <title>{{ $web->site_name ?? env('APP_NAME') }}</title>
     <link rel="shortcut icon" href="{{ $web->favicon ? 'data:image/png;base64,' . $web->favicon : asset('dist/img/icon.png') }}" type="image/x-icon">
 
+    <link rel="stylesheet" type="text/css" href="/DataTables-2.1.7/extensions/Editor-2.3.2/css/editor.bootstrap.css">
+ 
+
 
     <!-- CSS files -->
     <link href="{{ asset('dist/css/tabler.min.css?1692870487') }}" rel="stylesheet" />
@@ -108,11 +111,15 @@
             font-weight: 500;
         }
 
-
+        .navbar-brand-image {
+            height: 3rem;
+            width: auto;
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.4.3/css/scroller.dataTables.min.css">
+
 
 
     @yield('styles')
@@ -121,6 +128,15 @@
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.dataTables.js"></script>
     <script src="https://cdn.datatables.net/scroller/2.4.3/js/dataTables.scroller.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+
+
 
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 
@@ -152,7 +168,7 @@
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark">
                     <a href="{{ route('dashboard') }}">
-                        <img src="{{ $web->logo ? 'data:image/png;base64,' . $web->logo : asset('dist/img/opnicare.png') }}" width="110" height="32" alt="Opni Care" class="navbar-brand-image">
+                        <img src="{{ $web->logo ? 'data:image/png;base64,' . $web->logo : asset('dist/img/opnicare.png') }}" width="150" height="48" alt="Opni Care" class="navbar-brand-image">
                     </a>
                 </h1>
                 <div class="collapse navbar-collapse" id="sidebar-menu">
@@ -191,6 +207,7 @@
                                             <a class="dropdown-item {{ Route::is('pendaftarans.index') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
                                             <a class="dropdown-item {{ Route::is('cek-pendaftarans.index') ? 'active' : '' }}" href="{{ route('cek-pendaftarans.index') }}">Cek Pendaftaran Pasien</a>
                                             <a class="dropdown-item {{ Route::is('pemeriksaan-pasien.*') ? 'active' : '' }}" href="{{ route('pemeriksaan-pasien.index') }}">Pemeriksaan Pasien</a>
+                                            <a class="dropdown-item {{ Route::is('transaksis.*') ? 'active' : '' }}" href="{{ route('transaksis.index') }}">Layanan Transaksi</a>
 
 
                                     </div>

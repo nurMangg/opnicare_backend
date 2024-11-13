@@ -118,15 +118,15 @@
                                     </colgroup>
                                     <tr>
                                         <td>Tinggi Badan</td>
-                                        <td>&emsp;&emsp;: <span id="sda">sss</span></td>
+                                        <td>&emsp;&emsp;: <span id="sda">-</span></td>
                                     </tr>
                                     <tr>
                                         <td>Berat Badan</td>
-                                        <td>&emsp;&emsp;: <span id="no_rm">{{ $pendaftaran->no_rm ?? ' -'}}</span></td>
+                                        <td>&emsp;&emsp;: <span id="no_rm">-</span></td>
                                     </tr>
                                     <tr>
                                         <td>Tekanan Darah</td>
-                                        <td>&emsp;&emsp;: <span id="nik">{{ $pendaftaran->nik ?? ' -'}}</span></td>
+                                        <td>&emsp;&emsp;: <span id="nik">-</span></td>
                                     </tr>
                                     <tr>
                                         <td>Tanggal Daftar</td>

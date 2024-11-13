@@ -90,7 +90,7 @@ class PemeriksaanPasienController extends Controller
     {
         if ($request->ajax()) {
             $data = Pendaftaran::where('tanggal_daftar', date('Y-m-d'))
-                            ->where('status', 'Dalam Antrian')
+                            ->whereNotIn('status', ['Terdaftar', 'Gagal'])
                             ->get();
             return datatables()::of($data)
                     ->addIndexColumn()
@@ -163,11 +163,11 @@ public function store(Request $request)
         return response()->json(['errors' => $validator->errors()], 422);
     }
 
-    $diagnosaCount = Pasien::whereYear('created_at', date('Y'))
+    $diagnosaCount = Diagnosa::whereYear('created_at', date('Y'))
     ->whereMonth('created_at', date('m'))
     ->count();
 
-    $diagnosaRM = str_pad($diagnosaCount + 1, 3, '0', STR_PAD_LEFT);
+    $diagnosaRM = str_pad($diagnosaCount + 1, 4, '0', STR_PAD_LEFT);
     // dd($request->all());
 
     $diagnosa = Diagnosa::updateOrCreate(
@@ -185,6 +185,11 @@ public function store(Request $request)
             'kd_pendaftaran' => $request->no_pendaftaran,
         ]
     );
+
+    $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->no_pendaftaran)->first();
+    $pendaftaran->update([
+        'status' => "Selesai",
+    ]);
 
     $this->storeRiwayat(Auth::user()->id, "diagnosas", "INSERT", json_encode($diagnosa));
 

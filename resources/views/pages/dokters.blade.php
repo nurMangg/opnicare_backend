@@ -89,10 +89,42 @@
 
 
         $('#laravel_datatable').DataTable({
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            text: '<i class="fas fa-copy"></i> Copy',
+                            className: 'btn btn-primary btn-sm'
+                        },
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            className: 'btn btn-success btn-sm'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'btn btn-info btn-sm'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'btn btn-danger btn-sm'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Print',
+                            className: 'btn btn-secondary btn-sm'
+                        }
+                    ],
+                },
+            },
             processing: true,
             serverSide: true,
             ajax: "{{ route('dokters.index') }}",
-            columns: [{
+            columns: [
+                {
                     data: 'id',
                     name: 'id'
                 },
@@ -140,14 +172,11 @@
                     name: 'status',
                     render: function (data, type, row) {
                         if (data == 'aktif') {
-                            return '<span class="badge bg-success text-white">' +
-                                'Aktif' + '</span>';
+                            return '<span class="badge bg-success text-white">Aktif</span>';
                         } else if (data == 'tidak') {
-                            return '<span class="badge bg-danger text-white">' +
-                                'Tidak Aktif' + '</span>';
+                            return '<span class="badge bg-danger text-white">Tidak Aktif</span>';
                         } else {
-                            return '<span class="badge bg-warning">' + 'Belum diatur' +
-                                '</span>';
+                            return '<span class="badge bg-warning">Belum diatur</span>';
                         }
                     }
                 },
@@ -156,11 +185,10 @@
                     name: 'action',
                     orderable: false,
                     searchable: false
-                },
+                }
             ],
             responsive: true,
-            scrollX: true,
-
+            scrollX: true
         });
 
         $('#createNewUser').click(function () {
