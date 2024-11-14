@@ -34,6 +34,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>No. Antrian</th>
                                 <th>No. Pendaftaran</th>
                                 <th>No. Rekam Medis</th>
                                 <th>Nama Pasien</th>
@@ -71,9 +72,14 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('pendaftarans.listpendaftarans') }}",
+            order: [[0, 'desc']],
             columns: [{
                     data: 'id',
                     name: 'id'
+                },
+                {
+                    data: 'no_antrian',
+                    name: 'no_antrian'
                 },
                 {
                     data: 'no_pendaftaran',

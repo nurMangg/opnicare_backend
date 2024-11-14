@@ -5,6 +5,7 @@ namespace App\Http\Controllers\setting;
 use App\Http\Controllers\Controller;
 use App\Models\SettingWeb;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class SettingController extends Controller
@@ -112,6 +113,9 @@ class SettingController extends Controller
             'phone' => $request->phone,
             'address' => $request->address,
         ]);
+
+        $this->storeRiwayat(Auth::user()->id, "settingweb", "UPDATE", json_encode($web));
+
 
         return response()->json(['success' => 'Pengaturan Web berhasil disimpan.']);
 

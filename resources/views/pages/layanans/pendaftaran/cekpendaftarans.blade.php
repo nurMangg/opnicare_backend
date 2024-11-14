@@ -125,7 +125,7 @@
         </div>
 
 
-
+        @include('pages.layanans.pendaftaran.report.strukantrian')
         {{-- Ajax Modal --}}
 
         {{-- Modal loading --}}
@@ -144,54 +144,6 @@
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                });
-
-
-                $('#laravel_datatable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: "{{ route('pasiens.index') }}",
-                    columns: [{
-                            data: 'id',
-                            name: 'id'
-                        },
-                        {
-                            data: 'no_rm',
-                            name: 'no_rm'
-                        },
-                        {
-                            data: 'nik',
-                            name: 'nik'
-                        },
-                        {
-                            data: 'tanggal_lahir',
-                            name: 'tanggal_lahir'
-                        },
-                        {
-                            data: 'jk',
-                            name: 'jk'
-                        },
-                        {
-                            data: 'agama',
-                            name: 'agama'
-                        },
-                        {
-                            data: 'pekerjaan',
-                            name: 'pekerjaan'
-                        },
-                        {
-                            data: 'alamat',
-                            name: 'alamat'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
-                    ],
-                    responsive: true,
-                    scrollX: true,
                 });
 
                 $('#createNewUser').click(function () {
@@ -273,7 +225,7 @@
 
                 var no_pendaftaran = $('#no_pendaftaran').val()
 
-                if ($('#status').val() == 'Terdaftar') {
+                if ($('#tanggal_daftar').val() == '{{ date('Y-m-d') }}') {
                     $.ajax({
                         data: {
                             no_pendaftaran: no_pendaftaran
@@ -290,6 +242,12 @@
                                 @component('components.popup.alert', ['type' => 'success', 'message' => 'Pendaftaran Berhasil di Konfirmasi'])
                                 @endcomponent`)
 
+                            document.getElementById("antrian").innerHTML = data.no_antrian;
+                            document,getElementById("poli").innerHTML = data.nama_poli;
+                            
+                            $('#queueTicketModal').modal('show');
+
+
                         },
                         error: function (xhr) {
                             $('#confirmBtn').html('Save Changes');
@@ -305,10 +263,11 @@
                             } else if (xhr.status === 400) {
                                 var alertMessage = xhr.responseJSON.message;
                                 var error = `
-                                @component('components.popup.alert', ['type' => 'danger', 'message' => "Lakukan Konfirmasi Pendaftaran pada Tanggal Pendaftaran" ])
+                                @component('components.popup.alert', ['type' => 'danger', 'message' => "Nomor Pendaftaran sudah di konfirmasi" ])
                                 @endcomponent`
 
                                 $('#alertPlaceholder').append(error);
+                                
                             }
                         }
                     });
@@ -316,7 +275,7 @@
                     $('#confirmBtn').html('Save Changes');
 
                     var error = `
-                        @component('components.popup.alert', ['type' => 'danger', 'message' => "Nomor Pendaftaran sudah di konfirmasi" ])
+                        @component('components.popup.alert', ['type' => 'danger', 'message' => "Lakukan Konfirmasi Pendaftaran pada Tanggal Pendaftaran" ])
                         @endcomponent`
 
                     $('#alertPlaceholder').append(error);

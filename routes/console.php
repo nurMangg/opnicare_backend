@@ -8,4 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('app:update-expired-pendaftaran')->daily();
+Schedule::command('app:update-expired-pendaftaran')->daily()->timezone('Asia/Jakarta')
+->at('00:00');

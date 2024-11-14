@@ -47,6 +47,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
+                                <th>No. Antrian</th>
                                 <th>No. Pendaftaran</th>
                                 <th>No. Rekam Medis</th>
                                 <th>Nama Pasien</th>
@@ -92,6 +93,10 @@
                     render: function (data, type, row, meta) {
                         return meta.row + 1;
                     }
+                },
+                {
+                    data: 'no_antrian',
+                    name: 'no_antrian'
                 },
                 {
                     data: 'no_pendaftaran',

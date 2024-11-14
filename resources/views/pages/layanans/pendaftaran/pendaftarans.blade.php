@@ -246,6 +246,8 @@ $(document).ready(function () {
                     @component('components.popup.alert', ['type' => 'success', 'message' => 'Pendaftaran berhasil!'])
                     @endcomponent
                 `);
+                
+
 
                 //reset form
                 $('#userForm').trigger("reset");

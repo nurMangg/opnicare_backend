@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pasien;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class PasienController extends Controller
@@ -192,6 +194,15 @@ class PasienController extends Controller
              'status' => $request->status, 
              'no_rm' => $this->generateUniqueCode($pasienRM)
              ]
+        );
+
+        $userpengguna = User::updateOrCreate(
+            ['email' => $user->email],
+            ['name' => $request->nama_pasien, 
+             'email' => $request->email, 
+             'password' => Hash::make('password'),
+             'role_id' => '2',
+            ]
         );
 
         $this->storeRiwayat(Auth::user()->id, "mspasien", "INSERT", json_encode($user));

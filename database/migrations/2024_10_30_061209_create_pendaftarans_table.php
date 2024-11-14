@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('data_pendaftaran', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('no_antrian')->nullable();
             $table->string('no_pendaftaran');
             $table->string('pasien_id');
             $table->string('dokter_id');

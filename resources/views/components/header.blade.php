@@ -2,6 +2,8 @@
 
     use App\Models\Roles;
     $role = Roles::where('role_id', Auth::user()->role_id)->first();
+    // dd($role);
+    // dd(Auth::user()->role_id);
 
     $web = App\Models\SettingWeb::first();
 ?>
@@ -288,8 +290,8 @@
                                 <div class="dropdown-menu show">
                                     <div class="dropdown-menu-columns">
                                             <a class="dropdown-item {{ Route::is('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Setting Web</a>
-                                            <a class="dropdown-item {{ Route::is('setting-pengguna.*') ? 'active' : '' }}" href="{{ route('setting-pengguna.index') }}">Setting Pengguna</a>
-                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}" disabled>Riwayat Pengguna</a>
+                                            <span class="dropdown-item {{ Route::is('setting-pengguna.*') ? 'active' : '' }}" style="cursor: not-allowed;">Setting Pengguna</span>
+                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}" disabled>Riwayat Web</a>
 
 
                                     </div>

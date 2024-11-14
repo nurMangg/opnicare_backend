@@ -4,6 +4,7 @@ namespace App\Http\Controllers\layanan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pendaftaran;
+use App\Models\Poli;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -254,18 +255,57 @@ class CekPendaftaranController extends Controller
             return response()->json(['message' => 'Anda sudah melakukan konfirmasi pendaftaran'], 400);
         }
 
-        $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->no_pendaftaran)->first();
+        $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->no_pendaftaran)
+        ->leftJoin('mspoli', 'data_pendaftaran.poli_id', 'mspoli.id')
+        ->select('data_pendaftaran.*', 'mspoli.nama_poli')
+        ->first();
 
         $tanggal_sekarang = Carbon::now()->format('Y-m-d');
         if ($pendaftaran->tanggal_daftar == $tanggal_sekarang) {
-            $pendaftaran->update(['status' => 'Dalam Antrian']);
+
+            $jumlahHariIni = Pendaftaran::whereDate('tanggal_daftar', $tanggal_sekarang)->where('poli_id', $pendaftaran->poli_id)->where('no_antrian', '!=', null)->count();
+            // dd($jumlahHariIni);
+            $noantrian = str_pad($jumlahHariIni + 1, 3, '0', STR_PAD_LEFT);
+            // dd($noantrian, $jumlahHariIni);
+            $noantri = $this->generateUniqueCode($pendaftaran->poli_id, $noantrian);
+            $pendaftaran->update([
+                'status' => 'Dalam Antrian',
+                'no_antrian' => $noantri
+            ]);
+            // dd($pendaftaran);
 
             $this->storeRiwayat(Auth::user()->id, "pendaftaran", "UPDATEANTRIAN", json_encode($pendaftaran));
 
 
-            return response()->json(['message' => 'Pendaftaran Berhasil'], 200);
+            return response()->json(['message' => 'Pendaftaran Berhasil', 'data' => $pendaftaran], 200);
         } else {
             return response()->json(['message' => 'Lakukan Konfirmasi Pendaftaran pada Tanggal Pendaftaran'], 400);
         }
+    }
+
+    public function generateUniqueCode($poli_id, $antrian) {
+        $noantri = substr($antrian, -3);
+
+        $poli = Poli::find($poli_id);
+        
+        $namaPoli = $poli->kd_poli;
+        
+        $uniqueCode = $namaPoli . $noantri;
+        return $uniqueCode;
+    }
+
+    public function cetakReport($id) {
+        if($id == null) {
+            return response()->json(['message' => 'Pendaftaran not found'], 404);
+        }
+
+
+
+
+
+        
+
+        
+
     }
 }

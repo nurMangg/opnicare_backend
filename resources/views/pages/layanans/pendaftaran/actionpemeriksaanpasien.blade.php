@@ -361,7 +361,7 @@
                             // Tampilkan alert sukses
 
                                 $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Dokter baru ditambahkan!'])
+                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Diagnosa baru ditambahkan!'])
                             @endcomponent
                         `);
                             

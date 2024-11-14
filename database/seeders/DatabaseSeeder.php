@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
 
         Roles::create([
             'role_name' => 'admin',
+        ],[
+            'role_name' => 'pengguna',
         ]);
 
         SettingWeb::create([

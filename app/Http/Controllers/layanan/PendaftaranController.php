@@ -214,21 +214,16 @@ class PendaftaranController extends Controller
 
         $this->storeRiwayat(Auth::user()->id, "pendaftaran", "INSERT", json_encode($pendaftaran));
 
-        return response()->json(['success' => 'Pendaftaran berhasil disimpan.']);
+        return response()->json(['success' => 'Pendaftaran berhasil disimpan.', 'data' => $pendaftaran->no_pendaftaran]);
     }
 
     public function getPendaftarans(Request $request)
     {
         if ($request->ajax()) {
-            $data = Pendaftaran::all();
+            $data = Pendaftaran::orderBy('id', 'asc')->get();
             return datatables()::of($data)
                     ->addIndexColumn()
-                    // ->addColumn('action', function($row){
 
-                    //     $btn = ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-outline-danger btn-sm deleteProduct"><i class="fa-solid fa-trash"></i> Delete</a>';
-                        
-                    //         return $btn;
-                    // })
                     ->editColumn('poli_id', function($row) {
                         return Poli::find($row->poli_id)->nama_poli;
                     })
