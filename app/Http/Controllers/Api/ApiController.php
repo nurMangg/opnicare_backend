@@ -47,6 +47,7 @@ class ApiController extends Controller
                 'message' => 'Login successful',
                 'token' => $token,
                 'no_rm' => $pasien->no_rm,
+                'nama' => $pasien->nama_pasien
             ], 200);
         }
 
@@ -95,23 +96,32 @@ class ApiController extends Controller
             ], 422);
         }
 
+        $dateOnly = date('Y-m-d', strtotime($request->date));
+
         $dokter = DataPoli::where('dokter_id', $request->dokter_id)->first();
         // dd($dokter);
+
 
         $Pasien = Pasien::where('no_rm', $request->pasien_id)->first();
         $user_id = User::where('email', $Pasien->email)->first();
 
-        $pendaftaranCount = Pendaftaran::whereDate('tanggal_daftar', $request->date)
+        if (Pendaftaran::where('pasien_id', $request->pasien_id)
+            ->where('poli_id', $dokter->poli_id)
+            ->where('tanggal_daftar', $dateOnly)
+            ->exists()) {
+            return response()->json(['error' => 'Pasien sudah terdaftar di poli ini untuk tanggal yang dipilih'], 421);
+        }
+        $pendaftaranCount = Pendaftaran::where('tanggal_daftar', $dateOnly)
         ->where('poli_id', $dokter->poli_id)
         ->count();
         $dokterKD = str_pad($pendaftaranCount + 1, 4, '0', STR_PAD_LEFT);
         
         $pendaftaran = Pendaftaran::create([
-            'no_pendaftaran' => $this->generateUniqueCode($dokterKD, $dokter->poli_id, $request->tanggal_daftar),
+            'no_pendaftaran' => $this->generateUniqueCode($dokterKD, $dokter->poli_id, $dateOnly),
             'pasien_id' => $request->pasien_id,
             'poli_id' => $dokter->poli_id,
             'dokter_id' => $request->dokter_id,
-            'tanggal_daftar' => $request->date,
+            'tanggal_daftar' => Date($request->date),
             'keluhan' => $request->keluhan,
             'status' => 'Terdaftar'
     ]);

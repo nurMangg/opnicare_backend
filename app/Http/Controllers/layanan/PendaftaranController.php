@@ -212,9 +212,17 @@ class PendaftaranController extends Controller
             'status' => 'Terdaftar'
         ]);
 
+        $data_pendaftar = [
+            'no_pendaftaran' => $pendaftaran->no_pendaftaran,
+            'nama_pasien' => Pasien::where('no_rm', $pendaftaran->pasien_id)->first()->nama_pasien,
+            'nama_dokter' => Dokter::where('id', $pendaftaran->dokter_id)->first()->nama,
+        ];
+
+
+
         $this->storeRiwayat(Auth::user()->id, "pendaftaran", "INSERT", json_encode($pendaftaran));
 
-        return response()->json(['success' => 'Pendaftaran berhasil disimpan.', 'data' => $pendaftaran->no_pendaftaran]);
+        return response()->json(['success' => 'Pendaftaran berhasil disimpan.', 'data' => $data_pendaftar], 200);
     }
 
     public function getPendaftarans(Request $request)

@@ -27,7 +27,10 @@ class UpdateExpiredPendaftaran extends Command
      */
     public function handle()
     {
-        Pendaftaran::where('status', 'Terdaftar')
+        Pendaftaran::where(function ($query) {
+            $query->where('status', 'Terdaftar')
+                  ->orWhere('status', 'Dalam Antrian');
+        })
             ->where('tanggal_daftar', '<', Carbon::now())
             ->update(['status' => 'Gagal']);
 

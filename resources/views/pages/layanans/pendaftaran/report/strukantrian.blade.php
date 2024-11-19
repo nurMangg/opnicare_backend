@@ -74,7 +74,7 @@
                     <div class="divider"></div>
                     <div class="queue-title">Nomor Antrian</div>
                     <div class="department" id="poli"></div>
-                    <div class="queue-number" id="antrian"></div>
+                    <div class="queue-number" id="antrian_no"></div>
                     <div class="footer">Terimakasih atas kunjungannya!</div>
                 </div>
             </div>

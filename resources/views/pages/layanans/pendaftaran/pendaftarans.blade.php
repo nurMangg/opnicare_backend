@@ -102,6 +102,10 @@
 {{-- Modal konfirmasi --}}
 <x-popup.modal_delete_confirmation />
 
+{{-- Modal sukses struk pendaftaran --}}
+@include('pages.layanans.pendaftaran.report.strukpendaftaran')
+
+
 
 <script>
 $(document).ready(function () { 
@@ -235,9 +239,12 @@ $(document).ready(function () {
             url: "{{ route('pendaftarans.store') }}",
             type: "POST",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                var data = response.data;
+                console.log(response);
+
+                // Reset error messages
                 $('.error').text('');
-                $('#laravel_datatable').DataTable().ajax.reload();
                 $('#saveBtn').html('Save Changes');
 
                 // Tampilkan alert sukses
@@ -247,7 +254,11 @@ $(document).ready(function () {
                     @endcomponent
                 `);
                 
+                document.getElementById("no_pendaftaranstruk").innerHTML = data.no_pendaftaran;
+                document.getElementById("nama_dokterstruk").innerHTML = data.nama_dokter;
+                document.getElementById("nama_pasienstruk").innerHTML = data.nama_pasien;
 
+                $('#pendaftaranTicketModal').modal('show');
 
                 //reset form
                 $('#userForm').trigger("reset");

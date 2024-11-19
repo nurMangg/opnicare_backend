@@ -43,7 +43,6 @@
                                 <th>Tanggal Daftar</th>
                                 <th>Keluhan</th>
                                 <th>Status</th>
-                                {{-- <th>Action</th> --}}
                             </tr>
                         </thead>
                     </table>

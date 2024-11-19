@@ -76,6 +76,37 @@
 
 
         $('#laravel_datatable').DataTable({
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            text: '<i class="fas fa-copy"></i> Copy',
+                            className: 'btn btn-primary btn-sm'
+                        },
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            className: 'btn btn-success btn-sm'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'btn btn-info btn-sm'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'btn btn-danger btn-sm'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Print',
+                            className: 'btn btn-secondary btn-sm'
+                        }
+                    ],
+                },
+            },
             processing: true,
             serverSide: true,
             ajax: "{{ route('polis.index') }}",

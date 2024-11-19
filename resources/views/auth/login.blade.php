@@ -57,7 +57,7 @@
         <div class="container container-tight my-5 px-lg-5">
             <x-auth-session-status class="mb-4" :status="session('status')" />
           <div class="text-center mb-4">
-            <a href="." class="navbar-brand navbar-brand-autodark"><img src="{{ asset('dist/img/opnicare.png') }}" height="46" alt=""></a>
+            <a href="." class="navbar-brand navbar-brand-autodark"><img src="{{ asset('dist/img/miniopnicare.png') }}" height="46" alt=""></a>
           </div>
           <h2 class="h3 text-center mb-3">
             Login to your account
@@ -87,11 +87,21 @@
                 name="password"
                 required autocomplete="current-password" class="form-control" >
                 <span class="input-group-text">
-                  <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                  <a href="#" class="link-secondary" onclick="togglePassword()" title="Show password" data-bs-toggle="tooltip">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
                   </a>
                 </span>
               </div>
+              <script>
+                function togglePassword() {
+                  var x = document.getElementById("password");
+                  if (x.type === "password") {
+                    x.type = "text";
+                  } else {
+                    x.type = "password";
+                  }
+                }
+              </script>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
 
             </div>

@@ -233,8 +233,9 @@
                         url: "{{ route('cek-pendaftarans.store') }}",
                         type: "POST",
                         dataType: 'json',
-                        success: function (data) {
-
+                        success: function (response) {
+                            // console.log(response);
+                            var data = response.data;
                             $('#confirmBtn').html('Save Changes');
 
                             // Tampilkan alert sukses
@@ -242,8 +243,8 @@
                                 @component('components.popup.alert', ['type' => 'success', 'message' => 'Pendaftaran Berhasil di Konfirmasi'])
                                 @endcomponent`)
 
-                            document.getElementById("antrian").innerHTML = data.no_antrian;
-                            document,getElementById("poli").innerHTML = data.nama_poli;
+                            document.getElementById("antrian_no").innerHTML = data.no_antrian;
+                            document.getElementById("poli").innerHTML = data.nama_poli;
                             
                             $('#queueTicketModal').modal('show');
 
