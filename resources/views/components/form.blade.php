@@ -44,7 +44,7 @@
                     @endforeach
                 </div>
                     <div class="col-sm-offset-2 col-sm-10 mt-3">
-                        <button type="submit" class="btn btn-gr" id="saveBtn" value="create">Save changes</button>
+                        <button type="submit" class="btn btn-gr" id="saveBtn" value="create">Simpan Data</button>
                     </div>
                 </form>
             </div>

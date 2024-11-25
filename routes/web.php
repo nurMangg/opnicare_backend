@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Data\DataPoliController;
 use App\Http\Controllers\Data\DataRekamMedisController;
+use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\DokterController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\layanan\CekPendaftaranController;
@@ -45,9 +46,9 @@ Route::post('/api/tambah-obat', [ApiController::class, 'tambahObat'])->name('api
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('api/getKamar', [KamarController::class, 'getKamar'])->name('kamars.getkamars');
-    Route::get('api/getDokter', [DokterController::class, 'getDokter'])->name('dokters.getdokter');
-    Route::get('api/getObat', [ObatController::class, 'getObat'])->name('obats.getobat');
+    Route::get('api/getKamar', [ApiController::class, 'getKamar'])->name('kamars.getkamars');
+    Route::get('api/getDokter', [ApiController::class, 'getDokter'])->name('dokters.getdokter');
+    Route::get('api/getObat', [ApiController::class, 'getObat'])->name('obats.getobat');
     Route::post('api/send-data-pendaftaran', [ApiController::class, 'sendDataPendaftaran'])->name('api.senddatapendaftaran');
     Route::get('/api/user', [ApiController::class, 'getUserData']);
     Route::get('api/get-riwayat-pendaftaran/{no_rm}', [ApiController::class, 'getRiwayatPendaftaran'])->name('api.getriwayatpendaftaran');
@@ -91,6 +92,9 @@ Route::middleware('auth')->group(function () {
     Route::post('users/reset-password', [UserController::class, 'reset_password'])->name('users.reset_password');
     Route::get('data/datapolis/getDokterByPoliId/{poliId}', [DataPoliController::class, 'getDokterByPoliId'])->name('data.datapolis.getDokterByPoliId');
     Route::get('data/data-pendaftarans', [PendaftaranController::class, 'getPendaftarans'])->name('pendaftarans.listpendaftarans');
+
+    Route::resource('masters/diagnosas', DiagnosaController::class);
+    Route::get('api/diagnosas/diagnosisutamas', [DiagnosaController::class, 'getOptions'])->name('api.diagnosas.diagnosisutamas');
 
 });
 

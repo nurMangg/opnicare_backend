@@ -4,8 +4,10 @@ namespace App\Http\Controllers\layanan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Diagnosa;
+use App\Models\DiagnosisICD;
 use App\Models\Dokter;
 use App\Models\Pasien;
+use App\Models\Pemeriksaan;
 use App\Models\Pendaftaran;
 use App\Models\Poli;
 use Illuminate\Http\Request;
@@ -114,12 +116,12 @@ class PemeriksaanPasienController extends Controller
     {
         if ($request->ajax()) {
         
-            $data = Diagnosa::where('pasien_id', $pasien_id)
+            $data = Pemeriksaan::where('pasien_id', $pasien_id)
                             ->get();
             return datatables()::of($data)
-                    ->addIndexColumn()
-
-                    ->rawColumns(['action'])
+                    ->editColumn('diagnosis_utama', function($row) {
+                        return DiagnosisICD::where('code', $row->diagnosis_utama)->first()->name_id;
+                    })
                     ->make(true);
         }
         
@@ -131,6 +133,7 @@ class PemeriksaanPasienController extends Controller
             ->leftjoin('mspasien', 'data_pendaftaran.pasien_id', '=', 'mspasien.no_rm')
             ->leftjoin('msdokter', 'data_pendaftaran.dokter_id', '=', 'msdokter.id')
             ->leftjoin('mspoli', 'data_pendaftaran.poli_id', '=', 'mspoli.id')
+            ->select('data_pendaftaran.*', 'mspasien.*', 'mspoli.*', 'msdokter.nama', 'msdokter.spesialisasi')
             ->first();
         return view('pages.layanans.pendaftaran.actionpemeriksaanpasien', ['pendaftaran' => $pendaftaran, 'title' => "Data Pemeriksaan Pasien", 'form_daftar' => $this->form_daftar]);
     }
@@ -150,43 +153,62 @@ public function store(Request $request)
 {
     $validator = Validator::make($request->all(), [
         'pasien_id' => 'required',
-
-        'hasil_pemeriksaan' => 'required',
-        'diagnosa' => 'required',
-        'tindakan' => 'required',
-        'resep_obat' => 'nullable',
-        'pemeriksaan_lanjutan' => 'nullable',
-        'catatan' => 'nullable',
+            'keluhan_utama' => 'required|string',
+            'riwayat_penyakit_sekarang' => 'required|string',
+            'tinggi_badan' => 'nullable|numeric',
+            'berat_badan' => 'nullable|numeric',
+            'tekanan_darah' => 'nullable|string',
+            'suhu_tubuh' => 'nullable|numeric',
+            'nadi' => 'nullable|numeric',
+            'frekuensi_napas' => 'nullable|numeric',
+            'diagnosis_utama' => 'required|exists:diagnosis_icd,code', 
+            'diagnosis_pendukung' => 'nullable|exists:diagnosis_utama,code',
+            'tindakan_medis' => 'nullable|array',
+            'resep_obat' => 'nullable|array',
+            'konsultasi_lanjutan' => 'nullable|string',
+            'rujukan' => 'required',
+            'anjuran_dokter' => 'nullable|string',
+            'status_pulang' => 'required|string|in:berobat_jalan,sehat,rujuk,meninggal',
     ]);
+
 
     if ($validator->fails()) {
         return response()->json(['errors' => $validator->errors()], 422);
     }
 
-    $diagnosaCount = Diagnosa::whereYear('created_at', date('Y'))
+    $diagnosaCount = Pemeriksaan::whereYear('created_at', date('Y'))
     ->whereMonth('created_at', date('m'))
     ->count();
 
     $diagnosaRM = str_pad($diagnosaCount + 1, 4, '0', STR_PAD_LEFT);
     // dd($request->all());
 
-    $diagnosa = Diagnosa::updateOrCreate(
-        ['id' => $request->id],
+    $diagnosa = Pemeriksaan::updateOrCreate(
+        ['kd_pendaftaran' => $request->kd_pendaftaran],
         [
-            'pasien_id' => $request->pasien_id,
-            'hasil_pemeriksaan' => $request->hasil_pemeriksaan,
-            'diagnosa' => $request->diagnosa,
-            'tindakan' => $request->tindakan,
-            'resep_obat' => $request->resep_obat,
-            'pemeriksaan_lanjutan' => $request->pemeriksaan_lanjutan,
-            'catatan' => $request->catatan,
+        'pasien_id' => $request->pasien_id,
+        'keluhan_utama' => $request->keluhan_utama,
+        'riwayat_penyakit_sekarang' => $request->riwayat_penyakit_sekarang,
+        'tinggi_badan' => $request->tinggi_badan,
+        'berat_badan' => $request->berat_badan,
+        'tekanan_darah' => $request->tekanan_darah,
+        'suhu_tubuh' => $request->suhu_tubuh,
+        'nadi' => $request->nadi,
+        'frekuensi_napas' => $request->frekuensi_napas,
+        'diagnosis_utama' => $request->diagnosis_utama,
+        'diagnosis_pendukung' => $request->diagnosis_pendukung,
+        'tindakan_medis' => json_encode($request->tindakan_medis),
+        'resep_obat' => json_encode($request->resep_obat),
+        'rujukan' => $request->rujukan,
+        'anjuran_dokter' => $request->anjuran_dokter,
+        'status_pulang' => $request->status_pulang,
             'tanggal_diagnosa' => date('Y-m-d'),
             'kd_diagnosa' => $this->generateUniqueCode($diagnosaRM),
-            'kd_pendaftaran' => $request->no_pendaftaran,
+            'kd_pendaftaran' => $request->kd_pendaftaran,
         ]
     );
 
-    $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->no_pendaftaran)->first();
+    $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->kd_pendaftaran)->first();
     $pendaftaran->update([
         'status' => "Selesai",
     ]);

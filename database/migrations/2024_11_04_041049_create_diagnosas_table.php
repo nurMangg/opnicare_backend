@@ -11,21 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('diagnosas', function (Blueprint $table) {
+        Schema::create('msdiagnosa', function (Blueprint $table) {
             $table->increments('id');
             $table->string('kd_diagnosa');
-            $table->string('kd_pendaftaran');
-            $table->string('pasien_id');
-            $table->date('tanggal_diagnosa');
-            $table->decimal('tinggi_badan', 5, 2)->nullable();
-            $table->decimal('berat_badan', 5, 2)->nullable();
-            $table->string('tekanan_darah')->nullable();
-            $table->string('hasil_pemeriksaan')->nullable();
-            $table->string('diagnosa')->nullable();
-            $table->string('tindakan')->nullable();
-            $table->string('resep_obat')->nullable();
-            $table->string('pemeriksaan_lanjutan')->nullable();
-            $table->text('catatan')->nullable();
+            $table->string('diagnosa');
+            $table->string('kategori')->nullable();
+            $table->double('harga');
             $table->timestamps();
         });
     }
@@ -35,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('diagnosas');
+        Schema::dropIfExists('msdiagnosa');
     }
 };

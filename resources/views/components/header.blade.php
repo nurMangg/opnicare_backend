@@ -31,7 +31,7 @@
         <link rel="shortcut icon" href="{{ asset('dist/img/icon.png') }}" type="image/x-icon">
     @endif
 
-    <link rel="stylesheet" type="text/css" href="/DataTables-2.1.7/extensions/Editor-2.3.2/css/editor.bootstrap.css">
+    {{-- <link rel="stylesheet" type="text/css" href="/DataTables-2.1.7/extensions/Editor-2.3.2/css/editor.bootstrap.css"> --}}
  
 
 
@@ -41,6 +41,9 @@
     <link href="{{ asset('dist/css/tabler-payments.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-vendors.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/demo.min.css?1692870487') }} rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{ asset('dist/css/select2.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <style>
         @import url('https://rsms.me/inter/inter.css');
 
@@ -141,10 +144,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.1.2/js/buttons.print.min.js"></script>
+    <script src="{{ asset('dist/js/select2.min.js') }}"></script>
 
 
 
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    {{-- <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> --}}
 
 
 </head>
@@ -185,7 +189,7 @@
                     <ul class="navbar-nav pt-lg-3">
                         <!-- Menu Item -->
                         <li class="nav-item {{ request()->is('/') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center" href="{{ route('dashboard') }}">
+                            <a class="nav-link d-flex align-items-center {{ Route::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
                                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                      stroke-linecap="round" stroke-linejoin="round">
@@ -200,7 +204,7 @@
         
                         <!-- Dropdown for Data Layanan -->
                         <li class="nav-item dropdown {{ request()->is('layanans/*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
+                            <a class="nav-link dropdown-toggle d-flex align-items-center " href="#navbar-base" data-bs-toggle="dropdown"
                                data-bs-auto-close="false" role="button" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
                                      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -238,6 +242,8 @@
                             </a>
                                 <div class="dropdown-menu show">
                                     <div class="dropdown-menu-columns">
+                                        <a class="dropdown-item {{ Route::is('diagnosas.*') ? 'active' : '' }}" href="{{ route('diagnosas.index') }}">Data Layanan Pemeriksaan</a>
+
                                             <a class="dropdown-item {{ Route::is('datapolis.*') ? 'active' : '' }}" href="{{ route('datapolis.index') }}">Data Poli</a>
                                             <a class="dropdown-item {{ Route::is('pendaftarans.listpendaftarans') ? 'active' : '' }}" href="{{ route('pendaftarans.listpendaftarans') }}">Data Pendaftaran</a>
                                             <a class="dropdown-item {{ Route::is('datarekammedis.*') ? 'active' : '' }}" href="{{ route('datarekammedis.index') }}">Data Rekam Medis</a>
@@ -269,8 +275,10 @@
                                             <a class="dropdown-item {{ Route::is('polis.*') ? 'active' : '' }}" href="{{ route('polis.index') }}">Poli</a>
                                             <a class="dropdown-item {{ Route::is('kamars.*') ? 'active' : '' }}" href="{{ route('kamars.index') }}">Kamar</a>
                                             <a class="dropdown-item {{ Route::is('dokters.*') ? 'active' : '' }}" href="{{ route('dokters.index') }}">Dokter</a>
+
                                             <a class="dropdown-item {{ Route::is('obats.*') ? 'active' : '' }}" href="{{ route('obats.index') }}">Obat</a>
                                             <a class="dropdown-item {{ Route::is('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Pengguna</a>
+
                                         
                                     </div>
                                 </div>
@@ -291,7 +299,8 @@
                                     <div class="dropdown-menu-columns">
                                             <a class="dropdown-item {{ Route::is('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Setting Web</a>
                                             <span class="dropdown-item {{ Route::is('setting-pengguna.*') ? 'active' : '' }}" style="cursor: not-allowed;">Setting Pengguna</span>
-                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}" disabled>Riwayat Web</a>
+                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}">Riwayat Web</a>
+                                            <a class="dropdown-item {{ Route::is('l5-swagger.default.api') ? 'active' : '' }}" href="{{ route('l5-swagger.default.api') }}" target="_blank">API Documentation</a>
 
 
                                     </div>

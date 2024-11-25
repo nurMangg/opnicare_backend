@@ -181,7 +181,7 @@
                     $('#userForm').trigger("reset");
                     $('#ajaxModel').modal('hide');
                     $('#laravel_datatable').DataTable().ajax.reload();
-                    $('#saveBtn').html('Save Changes');
+                    $('#saveBtn').html('Simpan Data');
 
                     // Tampilkan alert sukses
                     if (actionType === "create-user") {
@@ -197,7 +197,7 @@
                     }
                 },
                 error: function (xhr) {
-                    $('#saveBtn').html('Save Changes');
+                    $('#saveBtn').html('Simpan Data');
 
                     // Tampilkan pesan error
                     if (xhr.status === 422) {
