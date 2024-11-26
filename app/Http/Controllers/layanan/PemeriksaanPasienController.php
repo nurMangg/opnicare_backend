@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Diagnosa;
 use App\Models\DiagnosisICD;
 use App\Models\Dokter;
+use App\Models\Obat;
 use App\Models\Pasien;
+use App\Models\Pembayaran;
 use App\Models\Pemeriksaan;
 use App\Models\Pendaftaran;
 use App\Models\Poli;
@@ -143,7 +145,17 @@ class PemeriksaanPasienController extends Controller
         $pelangganPart = substr($id, -3);
 
 
-        $uniqueCode = "RM" . $date . $pelangganPart;
+        $uniqueCode = "DP" . $date . $pelangganPart;
+
+        return $uniqueCode;
+    }
+
+    public function generateUniqueCodePembayaran($id) {
+        $date = date('ym');
+        $pelangganPart = substr($id, -2);
+
+
+        $uniqueCode = "TRX" . $date . $pelangganPart;
 
         return $uniqueCode;
     }
@@ -202,18 +214,51 @@ public function store(Request $request)
         'rujukan' => $request->rujukan,
         'anjuran_dokter' => $request->anjuran_dokter,
         'status_pulang' => $request->status_pulang,
-            'tanggal_diagnosa' => date('Y-m-d'),
+            'tanggal_diagnosa' => now(),
             'kd_diagnosa' => $this->generateUniqueCode($diagnosaRM),
             'kd_pendaftaran' => $request->kd_pendaftaran,
         ]
     );
 
     $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->kd_pendaftaran)->first();
+
+    // hitung total
+    $total = 0;
+    if ($diagnosa->tindakan_medis) {
+        $total += array_sum(Diagnosa::whereIn('kd_diagnosa', $request->tindakan_medis)->pluck('harga')->toArray());
+    }
+    if ($diagnosa->resep_obat) {
+        $total += array_sum(Obat::whereIn('medicine_id', $request->resep_obat)->pluck('harga')->toArray());
+    }
+
+
+    $pembayaranCount = Pemeriksaan::whereYear('created_at', date('Y'))
+    ->whereMonth('created_at', date('m'))
+    ->count();
+    $no_pembayaran = str_pad($pembayaranCount + 1, 4, '0', STR_PAD_LEFT);
+
+    $pembayaran = Pembayaran::updateOrCreate(['kd_pendaftaran' => $diagnosa->kd_pendaftaran],
+    [
+        'no_pembayaran' => $this->generateUniqueCodePembayaran($no_pembayaran),
+        'no_diagnosa' => $diagnosa->kd_diagnosa,
+        'no_rm' => $diagnosa->pasien_id,
+        'nama_pasien' => Pasien::where('no_rm', $diagnosa->pasien_id)->first()->nama_pasien,
+        'poli' => Poli::find($pendaftaran->poli_id)->nama_poli,
+        'dokter' => Dokter::find($pendaftaran->dokter_id)->nama,
+        'tanggal_pemeriksaan' => $diagnosa->tanggal_diagnosa,
+        'tindakan_medis' => $diagnosa->tindakan_medis,
+        'resep_obat' => $diagnosa->resep_obat,
+        'total' => $total,
+        'status' => 'Belum Bayar',
+    ]);
+
     $pendaftaran->update([
         'status' => "Selesai",
     ]);
 
-    $this->storeRiwayat(Auth::user()->id, "diagnosas", "INSERT", json_encode($diagnosa));
+    $this->storeRiwayat(Auth::user()->id, "pemeriksaan", "INSERT", json_encode($diagnosa));
+    $this->storeRiwayat(Auth::user()->id, "pembayarans", "INSERT", json_encode($pembayaran));
+
 
 
     return response()->json(['success' => 'Data pemeriksaan berhasil disimpan.']);

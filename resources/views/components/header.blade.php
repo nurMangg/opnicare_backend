@@ -128,6 +128,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.4.3/css/scroller.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
 
 
 
@@ -223,6 +224,29 @@
                                             <a class="dropdown-item {{ Route::is('pemeriksaan-pasien.*') ? 'active' : '' }}" href="{{ route('pemeriksaan-pasien.index') }}">Pemeriksaan Pasien</a>
                                             <a class="dropdown-item {{ Route::is('transaksis.*') ? 'active' : '' }}" href="{{ route('transaksis.index') }}">Layanan Transaksi</a>
 
+
+                                    </div>
+                                </div>
+                        </li>
+
+                        <!-- Dropdown for Data Transaksi -->
+                        <li class="nav-item dropdown {{ request()->is('transaksi/*') ? 'active' : '' }}">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center " href="#navbar-base" data-bs-toggle="dropdown"
+                               data-bs-auto-close="false" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M17 9v6a1 1 0 0 1 -1 1h-11a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h11a1 1 0 0 1 1 1z" />
+                                    <path d="M7 15v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1 -1v-2" />
+                                    <path d="M10 12l-1 -1l1 -1" />
+                                    <path d="M14 12l1 -1l-1 -1" />
+                                </svg>
+                                <span class="nav-link-title">Pembayaran</span>
+                            </a>
+                                <div class="dropdown-menu show">
+                                    <div class="dropdown-menu-columns">
+                                            <a class="dropdown-item {{ Route::is('pembayarans.index') ? 'active' : '' }}" href="{{ route('pembayarans.index') }}">Transaksi Klinik</a>
 
                                     </div>
                                 </div>

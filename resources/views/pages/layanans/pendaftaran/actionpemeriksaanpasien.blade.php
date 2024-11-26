@@ -259,6 +259,7 @@
                                                             <label for="diagnosis_utama">Diagnosis Utama (ICD-10) <span class="text-danger">*</span></label>
                                                             <select class="select2-ajax" 
                                                                     id="diagnosis_utama"
+
                                                                     name="diagnosis_utama" 
                                                                     data-url="{{ route('api.diagnosas.diagnosisutamas') }}" 
                                                                     data-placeholder="Pilih Diagnosis Utama" 
@@ -328,7 +329,7 @@
                                                                         <select class="form-control" name="tindakan_medis[]" id="tindakan_medis" placeholder="Tindakan Medis 1">
                                                                             <option value="">Pilih Tindakan Medis</option>
                                                                             @foreach ($tindakanmedis as $tindakan_medis)
-                                                                                <option value="{{ $tindakan_medis->id }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>
+                                                                                <option value="{{ $tindakan_medis->kd_diagnosa }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>
                                                                             @endforeach
                                                                         </select>
                                                                         <button type="button" class="btn btn-primary btn-md" onclick="addTindakanMedis()">Tambah</button>
@@ -340,7 +341,7 @@
                                                             var count = 1;
                                                             function addTindakanMedis() {
                                                                 count++;
-                                                                $('#tindakan_medis_wrapper').append('<div class="input-group mt-2"><select class="form-control" name="tindakan_medis[]" id="tindakan_medis' + count + '"><option value="">Pilih Tindakan Medis</option>@foreach ($tindakanmedis as $tindakan_medis)<option value="{{ $tindakan_medis->id }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>@endforeach</select><button type="button" class="btn btn-danger btn-sm" onclick="removeTindakanMedis(this)">Hapus</button></div>');
+                                                                $('#tindakan_medis_wrapper').append('<div class="input-group mt-2"><select class="form-control" name="tindakan_medis[]" id="tindakan_medis' + count + '"><option value="">Pilih Tindakan Medis</option>@foreach ($tindakanmedis as $tindakan_medis)<option value="{{ $tindakan_medis->kd_diagnosa }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>@endforeach</select><button type="button" class="btn btn-danger btn-sm" onclick="removeTindakanMedis(this)">Hapus</button></div>');
                                                             }
                                                             
                                                             function removeTindakanMedis(element) {
@@ -355,7 +356,7 @@
                                                                         <select class="form-control" name="resep_obat[]" id="resep_obat" placeholder="Resep Obat 1">
                                                                             <option value="">Pilih Resep Obat</option>
                                                                             @foreach ($obats as $obat)
-                                                                                <option value="{{ $obat->nama_obat }}">{{ $obat->nama_obat }}</option>
+                                                                                <option value="{{ $obat->medicine_id }}">{{ $obat->nama_obat }}</option>
                                                                             @endforeach
                                                                         </select>
                                                                         <button type="button" class="btn btn-primary btn-md" onclick="addResepObat()">Tambah</button>
@@ -367,7 +368,7 @@
                                                             var count = 1;
                                                             function addResepObat() {
                                                                 count++;
-                                                                $('#resep_obat_wrapper').append('<div class="input-group mt-2"><select class="form-control" name="resep_obat[]" id="resep_obat' + count + '"><option value="">Pilih Resep Obat</option> @foreach ($obats as $obat)<option value="{{ $obat->nama_obat }}">{{ $obat->nama_obat }}</option>@endforeach</select><button type="button" class="btn btn-danger btn-sm" onclick="removeResepObat(this)">Hapus</button></div>');
+                                                                $('#resep_obat_wrapper').append('<div class="input-group mt-2"><select class="form-control" name="resep_obat[]" id="resep_obat' + count + '"><option value="">Pilih Resep Obat</option> @foreach ($obats as $obat)<option value="{{ $obat->medicine_id }}">{{ $obat->nama_obat }}</option>@endforeach</select><button type="button" class="btn btn-danger btn-sm" onclick="removeResepObat(this)">Hapus</button></div>');
                                                             }
                                                             
                                                             function removeResepObat(element) {

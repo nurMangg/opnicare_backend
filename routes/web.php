@@ -15,6 +15,7 @@ use App\Http\Controllers\layanan\PendaftaranController;
 use App\Http\Controllers\layanan\TransaksiController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
+use App\Http\Controllers\Pembayaran\PembayaranController;
 use App\Http\Controllers\PoliController;
 use App\Http\Controllers\setting\RiwayatController;
 use App\Http\Controllers\setting\SettingController;
@@ -95,6 +96,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('masters/diagnosas', DiagnosaController::class);
     Route::get('api/diagnosas/diagnosisutamas', [DiagnosaController::class, 'getOptions'])->name('api.diagnosas.diagnosisutamas');
+
+    Route::resource('transaksi/pembayarans', PembayaranController::class);
+    Route::get('transaksi/pembayarans/checked', [PembayaranController::class, 'index2'])->name('pembayarans.index2');
 
 });
 
