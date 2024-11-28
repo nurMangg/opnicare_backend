@@ -100,63 +100,16 @@
         initDataTable('#laravel_datatable_1', 'menunggu');
         initDataTable('#laravel_datatable_2', 'sudah');
 
-    });
-
-    function initDataTable(selector, keterangan) {
-        $(selector).DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('pembayarans.index') }}",
-                type: 'GET',
-                dataType: 'json',
-                data: {
-                    data : keterangan
-                },
-            },
-            order: [[0, 'desc']],
-            columns: [
-                { data: 'id', name: 'id', render: (data, type, row, meta) => meta.row + 1 },
-                { 
-                    data: 'no_pembayaran', 
-                    name: 'no_pembayaran', 
-                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">No. Diagnosa: ${row.no_diagnosa}</span>`
-                },
-                // { data: 'no_diagnosa', name: 'no_diagnosa' },
-                { data: 'nama_pasien', name: 'nama_pasien',
-                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">No.RM: ${row.no_rm}</span>`
-                 },
-                { 
-                    data: 'dokter', 
-                    name: 'dokter',
-                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">Poli: ${row.poli}</span>`
-
-                },
-                { data: 'tanggal_pemeriksaan', name: 'tanggal_pemeriksaan' },
-                { 
-                    data: 'total', 
-                    name: 'total', 
-                    render: (data) => `Rp. ${data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`
-                },
-                {
-                    data: 'status', 
-                    name: 'status', 
-                    render: (data) => `<span class="badge border-danger text-danger">${data}</span>`
-                },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ],
-            responsive: true,
-            scrollX: true,
-        });
-
-        $('body').on('click', '.editProduct', function () {
+        // Show Detail
+        $('body').on('click', '.viewData', function () {
             var user_id = $(this).data('id');
             $.get("{{ route('pembayarans.index') }}" + '/' + user_id + '/edit', function (data) {
                 $('#saveBtn').val("edit-user");
 
                 $('#ajaxModel').modal('show');
 
-                $('#user_id').val(data.info.id);
+                $('#user_id').val(data.info.no_pembayaran);
+                $('#dataModalLabel').text("Detail Pembayaran - " + data.info.no_pembayaran);
 
                 $('#no_pembayaran').text(data.info.no_pembayaran);
                 $('#no_diagnosa').text(data.info.no_diagnosa);
@@ -198,7 +151,7 @@
                             <tr>
                                 <td>${index + 1}</td>
                                 <td>${item.nama_obat}</td>
-                                <td style="text-align: right;"></td>
+                                <td style="text-align: right;">${data.jumlah_obat[index]}</td>
                                 <td><span style="float: left;">Rp.</span><span style="float: right;">${item.harga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span></td>
 
                             </tr>
@@ -207,14 +160,149 @@
                 } else {
                 }
 
+                if (data.info.bayar == null) {
+                    $('#fillbayar').hide();
+                    $('#checkbayar').show();
+                } else {
+                    $('#fillbayar').show();
+                    $('#checkbayar').hide();
+                    $('#fillbayar').html(`<span style="float: left;">Rp.</span><span style="float: right;">${data.info.bayar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>`);
+                    $('#saveBtn').hide();
+                }
 
+
+                $('#totalharga').val(data.info.total);
                 $('#total').html(`<span style="float: left;">Rp.</span><span style="float: right;">${data.info.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>`);
-                $('#bayar').html(`<span style="float: left;">Rp.</span><span style="float: right;">${data.info.bayar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>`);
-                $('#kembali').text(`Rp. ${data.info.kembali.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`);
+                $('#kembali').html(`<span style="float: left;">Rp.</span><span style="float: right;">${data.info.kembali.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>`);
+
 
                 // console.log(data);
             })
         });
+
+
+        // Update Detail
+        $('#saveBtn').click(function (e) {
+            e.preventDefault();
+            $('#saveBtn').html('Mengirim..');
+
+            // Reset error messages
+            $('#bayarError').text('');
+
+            var actionType = $(this).val();
+            var url = actionType === "{{ route('pembayarans.store') }}/";
+
+            var bayar = $('#bayar').val();
+            var total = $('#totalharga').val();
+
+            if (bayar < total) {
+                var alertHtml = `
+                    @component('components.popup.alert', ['type' => 'danger', 'message' => 'Bayar harus lebih tinggi dari total!'])
+                    @endcomponent
+                `;
+                $('#saveBtn').html('Simpan Data');
+                
+                // Tambahkan alert baru ke dalam placeholder
+                $('#alertPlaceholder').append(alertHtml);
+            } else {
+                $.ajax({
+                    data: {
+                        user_id: $('#user_id').val(),
+                        bayar: bayar,
+                        kembali: $('#kembaliharga').val(),
+                    },
+                    url: url,
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#ajaxModel').modal('hide');
+                        $('#laravel_datatable').DataTable().ajax.reload();
+                        $('#saveBtn').html('Simpan Data');
+
+
+                            $('#alertPlaceholder').html(`
+                        @component('components.popup.alert', ['type' => 'success', 'message' => 'Layanan diperbarui!'])
+                        @endcomponent`);
+                    },
+                    error: function (xhr) {
+                        $('#saveBtn').html('Simpan Data');
+
+                        // Tampilkan pesan error
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            if (errors.diagnosa) {
+                                $('#bayarError').text(errors.bayar[0]);
+                            }
+                        } else {
+                            $('#alertPlaceholder').html(`
+                        @component('components.popup.alert', ['type' => 'danger', 'message' => 'Pembayaran gagal Diperbarui!'])
+                        @endcomponent
+                    `);
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#editBtn').click(function (e) {
+            e.preventDefault();
+            $('#fillbayar').hide();
+            $('#checkbayar').show();
+            $('#saveBtn').show();
+
+        });
+
+    });
+
+    function initDataTable(selector, keterangan) {
+        $(selector).DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('pembayarans.index') }}",
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    data : keterangan
+                },
+            },
+            order: [[0, 'desc']],
+            columns: [
+                { data: 'id', name: 'id', render: (data, type, row, meta) => meta.row + 1 },
+                { 
+                    data: 'no_pembayaran', 
+                    name: 'no_pembayaran', 
+                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">No. Diagnosa: ${row.no_diagnosa}</span>`
+                },
+                // { data: 'no_diagnosa', name: 'no_diagnosa' },
+                { data: 'nama_pasien', name: 'nama_pasien',
+                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">No.RM: ${row.no_rm}</span>`
+                 },
+                { 
+                    data: 'dokter', 
+                    name: 'dokter',
+                    render: (data, type, row, meta) => `${data}<br> <span style="color: #6c757d">Poli: ${row.poli}</span>`
+
+                },
+                { data: 'tanggal_pemeriksaan', name: 'tanggal_pemeriksaan' },
+                { 
+                    data: 'total', 
+                    name: 'total', 
+                    render: (data) => `Rp. ${data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`
+                },
+                {
+                    data: 'status', 
+                    name: 'status', 
+                    render: (data) => `<span class="badge ${data === 'Sudah Bayar' ? 'border-success text-success' : 'border-danger text-danger'}">${data}</span>`
+                },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ],
+            responsive: true,
+            scrollX: true,
+        });
+
+        
+
     }
 
 </script>

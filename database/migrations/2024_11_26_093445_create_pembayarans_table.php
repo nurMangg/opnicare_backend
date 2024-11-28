@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('tanggal_pemeriksaan');
             $table->string('tindakan_medis')->nullable();
             $table->string('resep_obat')->nullable();
+            $table->string('jumlah_obat')->nullable();
             $table->string('total')->nullable();
             $table->string('bayar')->nullable();
             $table->string('kembali')->nullable();

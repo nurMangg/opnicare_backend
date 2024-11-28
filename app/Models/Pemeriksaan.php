@@ -25,6 +25,7 @@ class Pemeriksaan extends Model
         'diagnosis_pendukung',
         'tindakan_medis',
         'resep_obat',
+        'jumlah_obat',
         'konsultasi_lanjutan',
         'rujukan',
         'anjuran_dokter',

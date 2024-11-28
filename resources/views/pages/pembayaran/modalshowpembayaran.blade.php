@@ -1,6 +1,6 @@
 <style>
     .modal-header {
-        background-color: #16a085;
+        background-color: #007037;
         color: white;
     }
 
@@ -40,7 +40,10 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dataModalLabel">Data Pemeriksaan Awal - Klinik</h5>
+                <h5 class="modal-title" id="dataModalLabel"></h5>
+                <button type="button" class="btn btn-secondary" id="editBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Data">
+                    Request Edit
+                </button>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -101,11 +104,14 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>Total</th>
+                                <input type="hidden" id="totalharga">
                                 <td width="62%" id="total"></td>
                             </tr>
                             <tr>
                                 <th>Bayar</th>
-                                <td width="62%"><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Rp. </span></div><input type="number" id="bayar" class="form-control text-end" /></div></td>
+                                <input type="hidden" id="user_id">
+                                <td id="fillbayar"></td>
+                                <td id="checkbayar" width="62%"><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">Rp. </span></div><input type="number" id="bayar" class="form-control text-end" /></div></td>
                                 <script>
                                     document.getElementById('bayar').addEventListener('input', function (e) {
                                         // Ambil nilai input dan hapus format sebelumnya
@@ -116,12 +122,26 @@
                                 
                                         // Tampilkan kembali nilai dengan format
                                         e.target.value = formattedVal;
+
+                                        let total = document.getElementById('totalharga').value;
+                                        console.log(total);
+
+                                        let bayar = e.target.value.replace(/\./g, '');
+                                        console.log(bayar);
+
+                                        if (bayar != '') {
+                                            let kembali = parseInt(bayar) - parseInt(total);
+                                            document.getElementById('kembaliharga').value = kembali;
+                                            console.log(kembali);
+                                            $('#kembali').html(`<span style="float: left;">Rp.</span><span style="float: right;">${kembali.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>`);
+                                        }
                                     });
                                 </script>
                                 
                             </tr>
                             <tr>
                                 <th>Kembali</th>
+                                <input type="hidden" id="kembaliharga">
                                 <td width="62%" id="kembali"></td>
                             </tr>
                         </table>
@@ -129,17 +149,18 @@
                 </div>
 
                 <!-- Anjuran Dokter -->
-                <div class="section-title">Anjuran Dokter</div>
-                <ul>
-                    <li><strong>Lakukan kontrol rutin</strong> setiap minggu jika gejala berlanjut.</li>
-                    <li><strong>Hindari merokok</strong> dan paparan polusi udara.</li>
-                    <li><strong>Pastikan nutrisi seimbang,</strong> perbanyak sayur dan buah.</li>
-                </ul>
+                <div class="mt-3">
+                    <h3>Peringatan dalam Transaksi</h3>
+                    <ul>
+                        <li>Pastikan data transaksi sesuai sebelum melakukan pembayaran.</li>
+              
+                    </ul>
+                </div>
 
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary" id="saveBtn">Simpan Data</button>
             </div>
         </div>
     </div>

@@ -177,6 +177,7 @@ public function store(Request $request)
             'diagnosis_pendukung' => 'nullable|exists:diagnosis_utama,code',
             'tindakan_medis' => 'nullable|array',
             'resep_obat' => 'nullable|array',
+            'jumlah_obat' => 'nullable|array',
             'konsultasi_lanjutan' => 'nullable|string',
             'rujukan' => 'required',
             'anjuran_dokter' => 'nullable|string',
@@ -211,6 +212,7 @@ public function store(Request $request)
         'diagnosis_pendukung' => $request->diagnosis_pendukung,
         'tindakan_medis' => json_encode($request->tindakan_medis),
         'resep_obat' => json_encode($request->resep_obat),
+        'jumlah_obat' => json_encode($request->jumlah_obat),
         'rujukan' => $request->rujukan,
         'anjuran_dokter' => $request->anjuran_dokter,
         'status_pulang' => $request->status_pulang,
@@ -225,10 +227,17 @@ public function store(Request $request)
     // hitung total
     $total = 0;
     if ($diagnosa->tindakan_medis) {
-        $total += array_sum(Diagnosa::whereIn('kd_diagnosa', $request->tindakan_medis)->pluck('harga')->toArray());
+        $tindakanMedis = json_decode($diagnosa->tindakan_medis);
+        foreach ($tindakanMedis as $tindakanMedisItem) {
+            $total += Diagnosa::where('kd_diagnosa', $tindakanMedisItem)->value('harga');
+        }
     }
     if ($diagnosa->resep_obat) {
-        $total += array_sum(Obat::whereIn('medicine_id', $request->resep_obat)->pluck('harga')->toArray());
+        $resepObat = json_decode($diagnosa->resep_obat);
+        $jumlahObat = json_decode($diagnosa->jumlah_obat);
+        foreach ($resepObat as $key => $resepObatItem) {
+            $total += Obat::where('medicine_id', $resepObatItem)->value('harga') * $jumlahObat[$key];
+        }
     }
 
 
@@ -237,7 +246,7 @@ public function store(Request $request)
     ->count();
     $no_pembayaran = str_pad($pembayaranCount + 1, 4, '0', STR_PAD_LEFT);
 
-    $pembayaran = Pembayaran::updateOrCreate(['kd_pendaftaran' => $diagnosa->kd_pendaftaran],
+    $pembayaran = Pembayaran::updateOrCreate(['no_diagnosa' => $diagnosa->no_diagnosa],
     [
         'no_pembayaran' => $this->generateUniqueCodePembayaran($no_pembayaran),
         'no_diagnosa' => $diagnosa->kd_diagnosa,
@@ -248,6 +257,7 @@ public function store(Request $request)
         'tanggal_pemeriksaan' => $diagnosa->tanggal_diagnosa,
         'tindakan_medis' => $diagnosa->tindakan_medis,
         'resep_obat' => $diagnosa->resep_obat,
+        'jumlah_obat' => $diagnosa->jumlah_obat,
         'total' => $total,
         'status' => 'Belum Bayar',
     ]);

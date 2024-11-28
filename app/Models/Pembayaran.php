@@ -18,6 +18,8 @@ class Pembayaran extends Model
         'tanggal_pemeriksaan',
         'tindakan_medis',
         'resep_obat',
+        'jumlah_obat',
+        
         'total',
         'bayar',
         'kembali',

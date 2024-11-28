@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dokter;
 use App\Models\Poli;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -232,6 +233,14 @@ class DokterController extends Controller
              'status' => $request->status, 
              'kd_dokter' => $this->generateUniqueCode($dokterKD)
              ]
+        );
+
+        $addUser = User::updateOrCreate(
+            ['id' => $request->user_id],
+            ['name' => $request->nama,
+             'email' => $request->email, 
+             'password' => bcrypt('password'),
+             'role' => 'dokter']
         );
 
         $this->storeRiwayat(Auth::user()->id, "msdokter", "INSERT/UPDATE", json_encode($user));        

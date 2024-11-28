@@ -25,11 +25,12 @@ class DatabaseSeeder extends Seeder
             'role_id' => '1'
         ]);
 
-        Roles::create([
-            'role_name' => 'admin',
-        ],[
-            'role_name' => 'pengguna',
-        ]);
+        Roles::create(
+            ['role_name' => 'admin',],
+            ['role_name' => 'pengguna',],
+            ['role_name' => 'dokter',]
+
+        );
 
         SettingWeb::create([
             'favicon' => 'null',

@@ -17,6 +17,7 @@ use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\Pembayaran\PembayaranController;
 use App\Http\Controllers\PoliController;
+use App\Http\Controllers\setting\MenuController;
 use App\Http\Controllers\setting\RiwayatController;
 use App\Http\Controllers\setting\SettingController;
 use App\Http\Controllers\setting\SettingPenggunaController;
@@ -94,11 +95,13 @@ Route::middleware('auth')->group(function () {
     Route::get('data/datapolis/getDokterByPoliId/{poliId}', [DataPoliController::class, 'getDokterByPoliId'])->name('data.datapolis.getDokterByPoliId');
     Route::get('data/data-pendaftarans', [PendaftaranController::class, 'getPendaftarans'])->name('pendaftarans.listpendaftarans');
 
-    Route::resource('masters/diagnosas', DiagnosaController::class);
+    Route::resource('data/diagnosas', DiagnosaController::class);
     Route::get('api/diagnosas/diagnosisutamas', [DiagnosaController::class, 'getOptions'])->name('api.diagnosas.diagnosisutamas');
 
     Route::resource('transaksi/pembayarans', PembayaranController::class);
     Route::get('transaksi/pembayarans/checked', [PembayaranController::class, 'index2'])->name('pembayarans.index2');
+
+    Route::resource('setting/menus', MenuController::class);
 
 });
 

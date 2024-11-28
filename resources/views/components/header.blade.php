@@ -1,7 +1,11 @@
 <?php
 
     use App\Models\Roles;
+    use App\Models\Menu;
     $role = Roles::where('role_id', Auth::user()->role_id)->first();
+    $menus = Menu::whereNull('parent_id')->with('children')->orderBy('menu_order')->get();
+//  dd($menu);
+
     // dd($role);
     // dd(Auth::user()->role_id);
 
@@ -202,134 +206,40 @@
                                 <span class="nav-link-title">Home</span>
                             </a>
                         </li>
-        
-                        <!-- Dropdown for Data Layanan -->
-                        <li class="nav-item dropdown {{ request()->is('layanans/*') ? 'active' : '' }}">
+                        @foreach ($menus as $menu)
+                        <li class="nav-item dropdown {{ request()->is($menu->route . '/*') ? 'active' : '' }}">
+                            {{-- @dd($menu->route); --}}
                             <a class="nav-link dropdown-toggle d-flex align-items-center " href="#navbar-base" data-bs-toggle="dropdown"
-                               data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M14 18h-4a2 2 0 0 1 -2 -2v-8h2v8a2 2 0 0 0 2 2h8a2 2 0 0 1 2 2v8h-2v-8a2 2 0 0 0 -2 -2h-4"/>
-                                    <path d="M14 10v-8h-2v8"/>
-                                    <path d="M13 10h-3a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h3v-8a2 2 0 0 0 -2 -2"/>
-                                </svg>
-                                <span class="nav-link-title">Layanan</span>
+                            data-bs-auto-close="false" role="button" aria-expanded="false">
+                            {!! $menu->icon !!}
+                                <span class="nav-link-title">{{ $menu->name }}</span>
                             </a>
-                                <div class="dropdown-menu show">
-                                    <div class="dropdown-menu-columns">
-                                            <a class="dropdown-item {{ Route::is('pendaftarans.index') ? 'active' : '' }}" href="{{ route('pendaftarans.index') }}">Pendaftaran Pasien</a>
-                                            <a class="dropdown-item {{ Route::is('cek-pendaftarans.index') ? 'active' : '' }}" href="{{ route('cek-pendaftarans.index') }}">Cek Pendaftaran Pasien</a>
-                                            <a class="dropdown-item {{ Route::is('pemeriksaan-pasien.*') ? 'active' : '' }}" href="{{ route('pemeriksaan-pasien.index') }}">Pemeriksaan Pasien</a>
-                                            <a class="dropdown-item {{ Route::is('transaksis.*') ? 'active' : '' }}" href="{{ route('transaksis.index') }}">Layanan Transaksi</a>
-
-
-                                    </div>
-                                </div>
-                        </li>
-
-                        <!-- Dropdown for Data Transaksi -->
-                        <li class="nav-item dropdown {{ request()->is('transaksi/*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center " href="#navbar-base" data-bs-toggle="dropdown"
-                               data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M17 9v6a1 1 0 0 1 -1 1h-11a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h11a1 1 0 0 1 1 1z" />
-                                    <path d="M7 15v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1 -1v-2" />
-                                    <path d="M10 12l-1 -1l1 -1" />
-                                    <path d="M14 12l1 -1l-1 -1" />
-                                </svg>
-                                <span class="nav-link-title">Pembayaran</span>
-                            </a>
-                                <div class="dropdown-menu show">
-                                    <div class="dropdown-menu-columns">
-                                            <a class="dropdown-item {{ Route::is('pembayarans.index') ? 'active' : '' }}" href="{{ route('pembayarans.index') }}">Transaksi Klinik</a>
-
-                                    </div>
-                                </div>
-                        </li>
-
-                        <!-- Dropdown for Data Layanan -->
-                        <li class="nav-item dropdown {{ request()->is('data/*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
-                               data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <rect x="4" y="4" width="16" height="16" rx="2" />
-                                </svg>
-                                <span class="nav-link-title">Data</span>
-                            </a>
-                                <div class="dropdown-menu show">
-                                    <div class="dropdown-menu-columns">
-                                        <a class="dropdown-item {{ Route::is('diagnosas.*') ? 'active' : '' }}" href="{{ route('diagnosas.index') }}">Data Layanan Pemeriksaan</a>
-
-                                            <a class="dropdown-item {{ Route::is('datapolis.*') ? 'active' : '' }}" href="{{ route('datapolis.index') }}">Data Poli</a>
-                                            <a class="dropdown-item {{ Route::is('pendaftarans.listpendaftarans') ? 'active' : '' }}" href="{{ route('pendaftarans.listpendaftarans') }}">Data Pendaftaran</a>
-                                            <a class="dropdown-item {{ Route::is('datarekammedis.*') ? 'active' : '' }}" href="{{ route('datarekammedis.index') }}">Data Rekam Medis</a>
-
-
-                                    </div>
-                                </div>
-                        </li>
-                        
-                        <!-- Dropdown for Data Master -->
-                        <li class="nav-item dropdown {{ request()->is('masters/*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
-                               data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"/>
-                                    <path d="M12 12l8 -4.5"/>
-                                    <path d="M12 12l0 9"/>
-                                    <path d="M12 12l-8 -4.5"/>
-                                    <path d="M16 5.25l-8 4.5"/>
-                                </svg>
-                                <span class="nav-link-title">Data Master</span>
-                            </a>
-                                <div class="dropdown-menu show">
-                                    <div class="dropdown-menu-columns">
-                                            <a class="dropdown-item {{ Route::is('pasiens.*') ? 'active' : '' }}" href="{{ route('pasiens.index') }}">Pasien</a>
-                                            <a class="dropdown-item {{ Route::is('polis.*') ? 'active' : '' }}" href="{{ route('polis.index') }}">Poli</a>
-                                            <a class="dropdown-item {{ Route::is('kamars.*') ? 'active' : '' }}" href="{{ route('kamars.index') }}">Kamar</a>
-                                            <a class="dropdown-item {{ Route::is('dokters.*') ? 'active' : '' }}" href="{{ route('dokters.index') }}">Dokter</a>
-
-                                            <a class="dropdown-item {{ Route::is('obats.*') ? 'active' : '' }}" href="{{ route('obats.index') }}">Obat</a>
-                                            <a class="dropdown-item {{ Route::is('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">Pengguna</a>
-
+                            @if ($menu->children->isNotEmpty())
+                                <ul class="dropdown-menu show">
+                                    @foreach ($menu->children as $child)
+                                        @if ($child->name == 'API Documentation')
+                                        <li>
+                                            <a class="dropdown-item {{ Route::is($child->route) ? 'active' : '' }}"
+                                            href="{{ route($child->route) }}" target="_blank">
+                                                {{ $child->name }}
+                                            </a>
+                                        </li>
+                                        @else
+                                        <li>
+                                            <a class="dropdown-item {{ Route::is($child->route) ? 'active' : '' }}"
+                                            href="{{ route($child->route) }}">
+                                                {{ $child->name }}
+                                            </a>
+                                        </li>    
+                                        @endif
                                         
-                                    </div>
-                                </div>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </li>
-
-                        <li class="nav-item dropdown {{ request()->is('settins/*') ? 'active' : '' }}">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" data-bs-toggle="dropdown"
-                               data-bs-auto-close="false" role="button" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M10.325 4.5a2.5 2.5 0 0 1 4.671 0l2.674 2.677a11 11 0 0 1 0 9.701l-2.674 2.678A2.5 2.5 0 0 1 10.325 15h-4.65a2.5 2.5 0 1 1 0 -5h4.65"/>
-                                </svg>
-                                <span class="nav-link-title">Settings</span>
-                            </a>
-                                <div class="dropdown-menu show">
-                                    <div class="dropdown-menu-columns">
-                                            <a class="dropdown-item {{ Route::is('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">Setting Web</a>
-                                            <span class="dropdown-item {{ Route::is('setting-pengguna.*') ? 'active' : '' }}" style="cursor: not-allowed;">Setting Pengguna</span>
-                                            <a class="dropdown-item {{ Route::is('riwayats.*') ? 'active' : '' }}" href="{{ route('riwayats.index') }}">Riwayat Web</a>
-                                            <a class="dropdown-item {{ Route::is('l5-swagger.default.api') ? 'active' : '' }}" href="{{ route('l5-swagger.default.api') }}" target="_blank">API Documentation</a>
-
-
-                                    </div>
-                                </div>
-                        </li>
+                            
+                        @endforeach
+                        
                     </ul>
                 </div>
             </div>

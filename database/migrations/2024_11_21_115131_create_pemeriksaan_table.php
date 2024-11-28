@@ -29,6 +29,8 @@ return new class extends Migration
             $table->string('diagnosis_pendukung')->nullable();
             $table->text('tindakan_medis')->nullable();
             $table->text('resep_obat')->nullable();
+            $table->string('jumlah_obat')->nullable();
+            
             $table->text('konsultasi_lanjutan')->nullable();
             $table->string('rujukan')->default('Tidak');
             $table->text('anjuran_dokter')->nullable();

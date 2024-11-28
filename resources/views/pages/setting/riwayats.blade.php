@@ -112,6 +112,7 @@
                     name: 'created_at',
                 },
             ],
+            order: [[ 0, "desc" ]], 
             responsive: true,
             scrollX: true,
 
