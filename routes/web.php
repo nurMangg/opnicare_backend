@@ -33,8 +33,6 @@ Route::get('/scan', function () {
 });
 
 
-
-
 Route::get('api/csrf-token', function () {
     return response()->json(['csrf_token' => csrf_token()]);
 })->middleware('throttle:5,1');
@@ -44,7 +42,6 @@ Route::post('api/login', [ApiController::class, 'login'])
     ->name('api.login');
 
 Route::post('/api/tambah-obat', [ApiController::class, 'tambahObat'])->name('api.tambahObat');
-
 
 
 Route::middleware('auth:sanctum')->group(function () {

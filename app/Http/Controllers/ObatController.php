@@ -201,7 +201,7 @@ class ObatController extends Controller
         $medicine = Obat::updateOrCreate(
             ['id' => $request->input('user_id')],
             [
-                'medicine_id' => $request->input('user_id') ? $request->input('user_id') : $this->generateUniqueCode($obatKD),
+                'medicine_id' => $request->input('medicine_id') ? $request->input('medicine_id') : $this->generateUniqueCode($obatKD),
                 'nama_obat' => $request->input('nama_obat'),
                 'nama_generik' => $request->input('nama_generik'),
                 'kategori' => $request->input('kategori'),
