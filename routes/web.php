@@ -8,6 +8,7 @@ use App\Http\Controllers\Data\DataPoliController;
 use App\Http\Controllers\Data\DataRekamMedisController;
 use App\Http\Controllers\DiagnosaController;
 use App\Http\Controllers\DokterController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\layanan\CekPendaftaranController;
 use App\Http\Controllers\layanan\PemeriksaanPasienController;
@@ -93,12 +94,22 @@ Route::middleware('auth')->group(function () {
     Route::get('data/data-pendaftarans', [PendaftaranController::class, 'getPendaftarans'])->name('pendaftarans.listpendaftarans');
 
     Route::resource('data/diagnosas', DiagnosaController::class);
+    Route::POST('data/diagnosas/import', [DiagnosaController::class, 'import'])->name('diagnosas.import');
     Route::get('api/diagnosas/diagnosisutamas', [DiagnosaController::class, 'getOptions'])->name('api.diagnosas.diagnosisutamas');
 
     Route::resource('transaksi/pembayarans', PembayaranController::class);
     Route::get('transaksi/pembayarans/checked', [PembayaranController::class, 'index2'])->name('pembayarans.index2');
 
     Route::resource('setting/menus', MenuController::class);
+
+    Route::get('masters/import', [ImportController::class, 'index'])->name('import.index');
+    Route::post('masters/import/pasiens', [ImportController::class, 'importPasien'])->name('import.pasien');
+    Route::post('masters/import/polis', [ImportController::class, 'importPoli'])->name('import.poli');
+    Route::post('masters/import/kamars', [ImportController::class, 'importKamar'])->name('import.kamar');
+    Route::post('masters/import/obats', [ImportController::class, 'importObat'])->name('import.obat');
+
+
+
 
 });
 

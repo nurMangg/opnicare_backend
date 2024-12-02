@@ -118,9 +118,13 @@
                     processing: true,
                     serverSide: true,
                     ajax: "{{ route('pasiens.index') }}",
+                    order: [[0, 'desc']], // Change the column index and order type as needed
                     columns: [{
                             data: 'id',
-                            name: 'id'
+                            name: 'id',
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1;
+                            }
                         },
                         {
                             data: 'no_rm',

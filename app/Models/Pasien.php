@@ -8,6 +8,7 @@ class Pasien extends Model
 {
     protected $table = 'mspasien';
 
+    protected $primaryKey = 'id';
     protected $fillable = [
         'no_rm',
         'nik',

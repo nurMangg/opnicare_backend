@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\DiagnosaImport;
 use App\Models\Diagnosa;
 use App\Models\DiagnosisICD;
 use App\Models\Poli;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DiagnosaController extends Controller
 {
@@ -171,5 +173,22 @@ public function update(Request $request, $id)
         $this->storeRiwayat(Auth::user()->id, "msdiagnosa", "DELETE", json_encode($diagnosa));
         $diagnosa->delete();
         return response()->json(['success' => 'Diagnosa berhasil dihapus.']);
+    }
+
+    public function import(Request $request)
+    {
+        // Validasi file upload
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Import file menggunakan Maatwebsite Excel
+        Excel::import(new DiagnosaImport, $request->file('file'));
+
+        return response()->json(['success' => 'Data diagnosa berhasil diimport.']);
     }
 }

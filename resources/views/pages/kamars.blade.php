@@ -106,7 +106,7 @@
                     data: 'status',
                     name: 'status',
                     render: function (data, type, row) {
-                        if (data == 'tersedia') {
+                        if (data == 'Tersedia') {
                             return '<span class="badge bg-success text-white">' +
                                 'Tersedia' + '</span>';
                         } else if (data == 'tidak') {
