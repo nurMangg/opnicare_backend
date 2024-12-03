@@ -11,7 +11,7 @@
                     Overview
                 </div>
                 <h2 class="page-title">
-                    Menu {{ $title ?? env('APP_NAME') }}
+                    {{ $title ?? env('APP_NAME') }}
                     <!-- Page title actions -->
                     <div class="col-auto ms-auto d-print-none">
                         <div class="btn-list">
@@ -50,9 +50,8 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Reset Password</th>
+                                <th>Name Roles</th>
+                              
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -88,7 +87,7 @@
                     processing: true,
                     serverSide: true,
 
-                    ajax: "{{ route('users.index') }}",
+                    ajax: "{{ route('menuroles.index') }}",
                     columns: [{
                             data: 'id',
                             name: 'id',
@@ -97,24 +96,10 @@
                             }
                         },
                         {
-                            data: 'name',
-                            name: 'name'
+                            data: 'role_id',
+                            name: 'role_id'
                         },
-                        {
-                            data: 'email',
-                            name: 'email'
-                        },
-                        {
-                            data: 'reset_password',
-                            name: 'reset_password',
-                            orderable: false,
-                            searchable: false,
-                            render: function (data, type, row) {
-                                return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' +
-                                    row.id +
-                                    '" data-original-title="Reset" class="btn btn-warning btn-sm resetPassword"><i class="ti ti-key"></i> Reset Password</a>';
-                            }
-                        },
+
                         {
                             data: 'action',
                             name: 'action',
@@ -137,14 +122,17 @@
 
                 $('body').on('click', '.editProduct', function () {
                     var user_id = $(this).data('id');
-                    $.get("{{ route('users.index') }}" + '/' + user_id + '/edit', function (data) {
+                    $.get("{{ route('menuroles.index') }}" + '/' + user_id + '/edit', function (data) {
                         $('#modelHeading').html("Edit {{ $title ?? env('APP_NAME') }}");
                         $('#saveBtn').val("edit-user");
                         $('#ajaxModel').modal('show');
                         $('#user_id').val(data.id);
-                        $('#name').val(data.name);
-                        $('#email').val(data.email);
-                        $('#role').val(data.role_id).trigger('change');
+                        $('#role_id').val(data.role_id);
+                        $('#menu_id').val([]);
+                        $.each(data.menu_id, function( index, value ) {
+                            $("#menu_id-" + value).prop('checked', true);
+                        });
+                        
                     })
                 });
 
@@ -158,8 +146,8 @@
                     $('#passwordError').text('');
 
                     var actionType = $(this).val();
-                    var url = actionType === "create-user" ? "{{ route('users.store') }}" :
-                        "{{ route('users.index') }}/" + $('#user_id').val();
+                    var url = actionType === "create-user" ? "{{ route('menuroles.store') }}" :
+                        "{{ route('menuroles.index') }}/" + $('#user_id').val();
 
                     // Tentukan jenis permintaan (POST atau PUT)
                     var requestType = actionType === "create-user" ? "POST" : "PUT";
@@ -219,7 +207,7 @@
                 $('#confirmDeleteBtn').off('click').on('click', function () {
                     $.ajax({
                         type: 'DELETE',
-                        url: "{{ route('users.index') }}/" + user_id,
+                        url: "{{ route('menus.index') }}/" + user_id,
                         success: function (data) {
                             $('#laravel_datatable').DataTable().ajax.reload();
                             $('#confirmDeleteModal').modal('hide');
@@ -243,39 +231,7 @@
                 });
             });
 
-            $('body').on('click', '.resetPassword', function () {
-                var user_id = $(this).data('id');
-                $('#confirmResetPasswordModal').modal('show');
-
-                // Handle konfirmasi hapus
-                $('#confirmResetPasswordBtn').off('click').on('click', function () {
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{ route('users.reset_password') }}/",
-                        data: {
-                            id: user_id
-                        },
-                        success: function (data) {
-                            $('#confirmResetPasswordModal').modal('hide');
-
-                            // Tampilkan alert sukses
-                            $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Password berhasil direset!'])
-                            @endcomponent
-                        `);
-                        },
-                        error: function (xhr) {
-                            $('#confirmResetPasswordModal').modal('hide');
-
-                            // Tampilkan alert error
-                            $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'Password gagal direset!'])
-                            @endcomponent
-                        `);
-                        }
-                    });
-                });
-            });
+            
 
         </script>
         @endsection

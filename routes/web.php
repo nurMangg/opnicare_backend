@@ -19,15 +19,21 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\Pembayaran\PembayaranController;
 use App\Http\Controllers\PoliController;
 use App\Http\Controllers\setting\MenuController;
+use App\Http\Controllers\setting\MenuRoleController;
 use App\Http\Controllers\setting\RiwayatController;
 use App\Http\Controllers\setting\SettingController;
 use App\Http\Controllers\setting\SettingPenggunaController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckUserRole;
 use App\Models\Pendaftaran;
 
 Route::get('/', function () {
     return view('pages.dashboard');
 })->name('dashboard')->middleware(['auth', 'verified']);
+
+Route::get('/unauthorized', function () {
+    return view('unauthorized');
+})->name('unauthorized');
 
 Route::get('/scan', function () {
     return view('scan');
@@ -60,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
 });
 
-Route::middleware('auth')->group(function () {
+Route::group(['middleware' => ['auth', 'CheckUserRole']], function () {
     Route::resource('masters/users', UserController::class);
     Route::resource('masters/pasiens', PasienController::class);
 
@@ -101,6 +107,7 @@ Route::middleware('auth')->group(function () {
     Route::get('transaksi/pembayarans/checked', [PembayaranController::class, 'index2'])->name('pembayarans.index2');
 
     Route::resource('setting/menus', MenuController::class);
+    Route::resource('setting/menuroles', MenuRoleController::class);
 
     Route::get('masters/import', [ImportController::class, 'index'])->name('import.index');
     Route::post('masters/import/pasiens', [ImportController::class, 'importPasien'])->name('import.pasien');

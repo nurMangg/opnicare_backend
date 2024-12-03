@@ -92,7 +92,10 @@
                     ajax: "{{ route('menus.index') }}",
                     columns: [{
                             data: 'id',
-                            name: 'id'
+                            name: 'id',
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1;
+                            }
                         },
                         {
                             data: 'name',
@@ -138,7 +141,10 @@
                         $('#ajaxModel').modal('show');
                         $('#user_id').val(data.id);
                         $('#name').val(data.name);
-                        $('#email').val(data.email);
+                        $('#route').val(data.route);
+                        $('#icon').val(data.icon);
+                        $('#parent_id').val(data.parent_id).trigger('change');
+                        $('#menu_order').val(data.menu_order);
                     })
                 });
 
@@ -237,39 +243,7 @@
                 });
             });
 
-            $('body').on('click', '.resetPassword', function () {
-                var user_id = $(this).data('id');
-                $('#confirmResetPasswordModal').modal('show');
-
-                // Handle konfirmasi hapus
-                $('#confirmResetPasswordBtn').off('click').on('click', function () {
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{ route('users.reset_password') }}/",
-                        data: {
-                            id: user_id
-                        },
-                        success: function (data) {
-                            $('#confirmResetPasswordModal').modal('hide');
-
-                            // Tampilkan alert sukses
-                            $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'success', 'message' => 'Password berhasil direset!'])
-                            @endcomponent
-                        `);
-                        },
-                        error: function (xhr) {
-                            $('#confirmResetPasswordModal').modal('hide');
-
-                            // Tampilkan alert error
-                            $('#alertPlaceholder').html(`
-                            @component('components.popup.alert', ['type' => 'danger', 'message' => 'Password gagal direset!'])
-                            @endcomponent
-                        `);
-                        }
-                    });
-                });
-            });
+            
 
         </script>
         @endsection

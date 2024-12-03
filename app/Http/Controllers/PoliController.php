@@ -15,6 +15,8 @@ class PoliController extends Controller
 
     public function __construct()
     {
+        
+
         $this->title = 'Poli';
 
         $this->form = array(

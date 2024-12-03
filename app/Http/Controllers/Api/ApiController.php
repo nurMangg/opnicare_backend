@@ -477,7 +477,7 @@ class ApiController extends Controller
     public function sendKeluhan(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'foto' => 'required',
+            'foto' => 'nullable',
             'keluhan' => 'required',
         ]);
 

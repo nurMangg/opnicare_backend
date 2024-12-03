@@ -88,5 +88,19 @@ class MenuController extends Controller
         return response()->json(['success' => 'Menu created successfully.']);
     }
 
+    public function edit($id)
+    {
+        $data = Menu::findOrFail($id);
+        return response()->json($data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $data = $request->all();
+        $menu = Menu::findOrFail($id);
+        $menu->update($data);
+        return response()->json(['success' => 'Menu updated successfully.']);
+    }
+
     
 }

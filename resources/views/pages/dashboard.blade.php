@@ -16,6 +16,7 @@
 
     <div class="container mt-5">
         <div class="row g-3">
+            @if (Auth::user()->role_id == '1')
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-6">
@@ -248,6 +249,8 @@
                     </div>
                 </div>
             </div>
+            @endif
+            
 
 
             <script type="text/javascript">

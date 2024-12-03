@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Roles;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -32,6 +34,14 @@ class UserController extends Controller
                 'required' => true
 
             ),
+            array(
+                'label' => 'Role',
+                'field' => 'role',
+                'type' => 'select',
+                'placeholder' => 'Pilih Role',
+                'required' => true,
+                'options' => Roles::all()->pluck('role_name', 'role_id')->toArray()
+            )
 
 
         );
@@ -62,17 +72,18 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $request->id,
+            'role' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $password = bcrypt('password');
+        $password = Hash::make('password');
 
         $user = User::updateOrCreate(
             ['id' => $request->id],
-            ['name' => $request->name, 'email' => $request->email, 'password' => $password]
+            ['name' => $request->name, 'email' => $request->email, 'password' => $password, 'role_id' => $request->role]
         );
 
         $this->storeRiwayat(Auth::user()->id, "User", "INSERT", json_encode($user));
@@ -92,6 +103,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $id,
+            'role' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -102,6 +114,7 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'role_id' => $request->role
         ]);
 
         $this->storeRiwayat(Auth::user()->id, "User", "UPDATE", json_encode($user));

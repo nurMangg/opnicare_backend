@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('role_menu', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('role_id');
-            $table->integer('menu_id');
+            $table->string('menu_id');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role_menus');
+        Schema::dropIfExists('role_menu');
     }
 };

@@ -56,7 +56,7 @@
                                 <th>Tanggal Daftar</th>
                                 <th>Keluhan</th>
                                 <th>Status</th>
-                                {{-- <th>Action</th> --}}
+                                <th>Action</th>
                             </tr>
                         </thead>
                     </table>
@@ -96,7 +96,10 @@
                 },
                 {
                     data: 'no_antrian',
-                    name: 'no_antrian'
+                    name: 'no_antrian',
+                    render: function (data, type, row) {
+                        return data + '<span class="ms-2" onclick="speak(\'' + data + '\')">' + '<i class="ti ti-volume"></i>' + '</span>';
+                    }
                 },
                 {
                     data: 'no_pendaftaran',
@@ -149,25 +152,43 @@
                         }
                     }
                 },
-                // {
-                //     data: 'action',
-                //     name: 'action',
-                //     orderable: false,
-                //     searchable: false
-                // },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                }
             ],
             responsive: true,
             scrollX: true,
 
         });
 
-        $('#laravel_datatable tbody').on('click', 'tr', function() {
-            var data = table.row( this ).data();
-            window.location.href = '{{ route("pemeriksaan-pasien.show", ":id") }}'.replace(':id', data.no_pendaftaran);
-            })
+        $('body').on('click', '.editProduct', function () {
+var product_id = $(this).closest('tr').find('td:eq(2)').text();
+            window.location.href = '{{ route("pemeriksaan-pasien.show", ":id") }}'.replace(':id', product_id);
+        });
+
+        // $('#laravel_datatable tbody').on('click', 'tr', function() {
+        //     var data = table.row( this ).data();
+        //     window.location.href = '{{ route("pemeriksaan-pasien.show", ":id") }}'.replace(':id', data.no_pendaftaran);
+        //     })
 
 
     });
+
+    function speak(antrian) {
+        // Create a SpeechSynthesisUtterance
+        const utterance = new SpeechSynthesisUtterance(`Antrian nomor ${antrian} ,Silahkan Masuk!`);
+    
+        // Select a voice
+        const voices = speechSynthesis.getVoices();
+        utterance.lang = 'id-ID';
+        utterance.voice = voices.find(voice => voice.lang === 'id-ID');
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
 
 
 </script>

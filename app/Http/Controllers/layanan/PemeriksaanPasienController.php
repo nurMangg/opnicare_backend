@@ -98,6 +98,12 @@ class PemeriksaanPasienController extends Controller
                             ->get();
             return datatables()::of($data)
                     ->addIndexColumn()
+                    ->addColumn('action', function($row){
+
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-outline-primary btn-sm editProduct"><i class="fa-regular fa-pen-to-square"></i> Periksa</a>';
+                        
+                            return $btn;
+                    })
                     ->editColumn('poli_id', function($row) {
                         return Poli::find($row->poli_id)->nama_poli;
                     })

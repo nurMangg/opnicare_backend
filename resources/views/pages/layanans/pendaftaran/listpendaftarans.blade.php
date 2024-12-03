@@ -78,7 +78,10 @@
                 },
                 {
                     data: 'no_antrian',
-                    name: 'no_antrian'
+                    name: 'no_antrian',
+                    render: function (data, type, row) {
+                        return data + '<span class="ms-2" onclick="speak(\'' + data + '\')">' + '<i class="ti ti-volume"></i>' + '</span>';
+                    }
                 },
                 {
                     data: 'no_pendaftaran',
@@ -142,5 +145,17 @@
         
     });
 
+    function speak(antrian) {
+        // Create a SpeechSynthesisUtterance
+        const utterance = new SpeechSynthesisUtterance(`Antrian nomor ${antrian} ,Silahkan Masuk!`);
+    
+        // Select a voice
+        const voices = speechSynthesis.getVoices();
+        utterance.lang = 'id-ID';
+        utterance.voice = voices.find(voice => voice.lang === 'id-ID');
+
+        // Speak the text
+        speechSynthesis.speak(utterance);
+    }
 </script>
 @endsection

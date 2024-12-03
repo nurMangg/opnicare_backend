@@ -48,6 +48,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Medicine ID</th>
+                            <th>Image</th>
                             <th>Nama Obat</th>
                             <th>Kategori</th>
                             <th>Bentuk Dosis</th>
@@ -87,11 +88,21 @@
             ajax: "{{ route('obats.index') }}",
             columns: [{
                     data: 'id',
-                    name: 'id'
+                    name: 'id',
+                    render: function (data, type, row, meta) {
+                                return meta.row + 1;
+                            }
                 },
                 {
                     data: 'medicine_id',
                     name: 'medicine_id'
+                },
+                {
+                    data: 'foto',
+                    name: 'foto',
+                    render: function(data, type, row) {
+                        return '<div style="display: flex; align-items: center; justify-content: center;"><img src="data:image/png;base64,' + data + '" alt="Image" style="width: 50px; height: 50px;" /></div>';
+                    }
                 },
                 {
                     data: 'nama_obat',

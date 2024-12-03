@@ -1,25 +1,33 @@
 <?php
 
     use App\Models\Roles;
+    use App\Models\RoleMenu;
+
     use App\Models\Menu;
+
     $role = Roles::where('role_id', Auth::user()->role_id)->first();
-    $menus = Menu::whereNull('parent_id')->with('children')->orderBy('menu_order')->get();
-//  dd($menu);
 
-    // dd($role);
-    // dd(Auth::user()->role_id);
+    // Ambil menu_id yang diizinkan untuk role ini
+    $rolemenu = RoleMenu::where('role_id', Auth::user()->role_id)->first();
+    $menuIds = json_decode($rolemenu->menu_id, true);
 
+    // Ambil semua menu sesuai dengan menu_id
+    $menus = Menu::whereIn('id', $menuIds)->orderBy('menu_order')->get();
+
+    // Ambil menu utama (parent_id = null)
+    $megamenus = Menu::whereNull('parent_id')
+        ->orderBy('menu_order')
+        ->get()
+        ->filter(function ($menu) use ($menus) {
+            // Hanya tampilkan menu utama jika memiliki sub-menu dalam daftar menu_id
+            return $menus->contains('parent_id', $menu->id);
+        });
+
+
+    // dd($megamenus->toArray());
     $web = App\Models\SettingWeb::first();
 ?>
 <!doctype html>
-<!--
-* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
-* @version 1.0.0-beta20
-* @link https://tabler.io
-* Copyright 2018-2023 The Tabler Authors
-* Copyright 2018-2023 codecalm.net Paweł Kuna
-* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
--->
 <html lang="en">
 
 <head>
@@ -206,38 +214,32 @@
                                 <span class="nav-link-title">Home</span>
                             </a>
                         </li>
-                        @foreach ($menus as $menu)
-                        <li class="nav-item dropdown {{ request()->is($menu->route . '/*') ? 'active' : '' }}">
-                            {{-- @dd($menu->route); --}}
-                            <a class="nav-link dropdown-toggle d-flex align-items-center " href="#navbar-base" data-bs-toggle="dropdown"
-                            data-bs-auto-close="false" role="button" aria-expanded="false">
-                            {!! $menu->icon !!}
-                                <span class="nav-link-title">{{ $menu->name }}</span>
-                            </a>
-                            @if ($menu->children->isNotEmpty())
-                                <ul class="dropdown-menu show">
-                                    @foreach ($menu->children as $child)
-                                        @if ($child->name == 'API Documentation')
-                                        <li>
-                                            <a class="dropdown-item {{ Route::is($child->route) ? 'active' : '' }}"
-                                            href="{{ route($child->route) }}" target="_blank">
-                                                {{ $child->name }}
-                                            </a>
-                                        </li>
-                                        @else
-                                        <li>
-                                            <a class="dropdown-item {{ Route::is($child->route) ? 'active' : '' }}"
-                                            href="{{ route($child->route) }}">
-                                                {{ $child->name }}
-                                            </a>
-                                        </li>    
-                                        @endif
-                                        
-                                    @endforeach
-                                </ul>
+                        @foreach ($megamenus as $megaM)
+                            @php
+                                // Ambil sub-menu yang terkait dengan menu utama ini
+                                $subMenus = $menus->where('parent_id', $megaM->id);
+                            @endphp
+
+                            @if ($subMenus->count() > 0) {{-- Hanya tampilkan menu utama jika ada sub-menu --}}
+                                <li class="nav-item dropdown {{ request()->is($megaM->route . '/*') ? 'active' : '' }}">
+                                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#navbar-base" 
+                                    data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="false">
+                                        {!! $megaM->icon !!}
+                                        <span class="nav-link-title">{{ $megaM->name }}</span>
+                                    </a>
+                                    <ul class="dropdown-menu show">
+                                        @foreach ($subMenus as $item)
+                                            <li>
+                                                <a class="dropdown-item {{ Route::is($item->route) ? 'active' : '' }}" 
+                                                href="{{ route($item->route) }}" 
+                                                {{ $item->name == 'API Documentation' ? 'target="_blank"' : '' }}>
+                                                    {{ $item->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
                             @endif
-                        </li>
-                            
                         @endforeach
                         
                     </ul>
@@ -246,7 +248,7 @@
         </aside>
         
         <!-- Page content -->
-        <div class="page-wrapper">
+        <div class="page-wrapper" style="margin-bottom: 100px">
             <div class="container p-3">
                 <div class="navbar-nav d-flex g-5 flex-row justify-content-end ms-auto ">
 
@@ -402,7 +404,7 @@
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                             aria-label="Open user menu">
                             <span class="avatar avatar-sm"
-                                style="background-image: url('{{ asset('dist/img/rohman.png') }}')"></span>
+                                style="background-image: url('{{ asset('dist/img/logostatic.png') }}')"></span>
                             <div class="d-none d-xl-block ps-2">
                                 <div>{{ Auth::user()->name ?? 'Unknown' }}</div>
                                 <div class="mt-1 small text-secondary">{{ $role->role_name }}</div>

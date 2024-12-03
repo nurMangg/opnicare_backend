@@ -36,6 +36,19 @@
                                         <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
                                 </select>
+                            @elseif ($field['type'] === 'checkbox')
+                            <div class="row ms-3 mt-2">
+                                @foreach ($field['options'] as $value => $label)
+                                
+                                    <div class="col-md-3 form-check">
+                                        <input class="form-check-input" type="checkbox" id="{{ $field['field'] }}-{{ $value }}" name="{{ $field['field'] }}[]" value="{{ $value }}" {{ in_array($value, old($field['field'], [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ $field['field'] }}-{{ $value }}">
+                                            {{ $label }}
+                                        </label>
+                                    </div>
+                                
+                                @endforeach
+                            </div>
                             @else
                                 <input type="text" class="form-control" id="{{ $field['field'] }}" name="{{ $field['field'] }}" placeholder="{{ $field['placeholder'] }}" {{ $field['required'] ?? false ? 'required' : '' }} {{ $field['disabled'] ?? false ? 'disabled' : '' }}>
                             @endif
