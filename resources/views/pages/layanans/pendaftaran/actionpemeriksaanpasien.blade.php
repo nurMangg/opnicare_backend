@@ -338,15 +338,29 @@
                                                             </div>
                                                         </div>
                                                         <script>
-                                                            var count = 1;
-                                                            function addTindakanMedis() {
-                                                                count++;
-                                                                $('#tindakan_medis_wrapper').append('<div class="input-group mt-2"><select class="form-control w-auto" name="tindakan_medis[]" id="tindakan_medis' + count + '"><option value="">Pilih Tindakan Medis</option>@foreach ($tindakanmedis as $tindakan_medis)<option value="{{ $tindakan_medis->kd_diagnosa }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>@endforeach</select><button type="button" class="btn btn-danger btn-sm w-25 mx-2" onclick="removeTindakanMedis(this)">Hapus</button></div>');
-                                                            }
-                                                            
-                                                            function removeTindakanMedis(element) {
-                                                                $(element).parent().remove();
-                                                            }
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                let count = 1;
+                                                                window.addTindakanMedis = function () {
+                                                                    count++;
+                                                                    const tindakanMedisWrapper = document.getElementById('tindakan_medis_wrapper');
+                                                                    const div = document.createElement('div');
+                                                                    div.className = 'input-group mt-2';
+                                                                    div.innerHTML = `
+                                                                        <select class="form-control w-50" name="tindakan_medis[]" id="tindakan_medis${count}">
+                                                                            <option value="">Pilih Tindakan Medis</option>
+                                                                            @foreach ($tindakanmedis as $tindakan_medis)
+                                                                                <option value="{{ $tindakan_medis->kd_diagnosa }}">{{ $tindakan_medis->kategori }} - {{ $tindakan_medis->diagnosa }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                        <button type="button" class="btn btn-danger w-25 mx-2 btn-md" onclick="removeTindakanMedis(this)">Hapus</button>
+                                                                    `;
+                                                                    tindakanMedisWrapper.appendChild(div);
+                                                                };
+
+                                                                window.removeTindakanMedis = function (element) {
+                                                                    element.parentElement.remove();
+                                                                };
+                                                            });
                                                         </script>
                                                         <div class="col-md-12">
                                                             <div class="form-group mb-3">

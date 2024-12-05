@@ -192,10 +192,10 @@
             var actionType = $(this).val();
             var url = actionType === "{{ route('pembayarans.store') }}/";
 
-            var bayar = $('#bayar').val();
-            var total = $('#totalharga').val();
-
-            if (bayar < total) {
+            var bayar = $('#bayar').val().replace(/\./g, ''); //70000
+            var total = $('#totalharga').val(); //50000
+            console.log(total, bayar);
+            if (parseInt(bayar) < parseInt(total)) {
                 var alertHtml = `
                     @component('components.popup.alert', ['type' => 'danger', 'message' => 'Bayar harus lebih tinggi dari total!'])
                     @endcomponent

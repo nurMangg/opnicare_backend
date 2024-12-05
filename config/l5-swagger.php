@@ -217,10 +217,13 @@ return [
                 */
 
                 'sanctum' => [
-                    'type' => 'http',
+                    // type' => 'apiKey',
+                    'type' => 'apiKey',
                     'description' => 'Laravel Sanctum token authentication',
                     'scheme' => 'bearer',
-                    'bearerFormat' => 'JWT'
+                    'name' => 'Authorization',
+                    'bearerFormat' => 'JWT',
+                    'in' => 'header',
                 ],
             ],
             'security' => [

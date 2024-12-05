@@ -31,12 +31,12 @@ class DiagnosaImport implements ToModel, WithStartRow
         }
 
         // Cek apakah ada diagnosa yang sama
-        $diagnosaExists = Diagnosa::where('kategori', $row[0])
-            ->where('diagnosa', $row[1])
-            ->first();
+        $diagnosaExists = Diagnosa::where([
+            ['kategori', '=', $row[0]],
+            ['diagnosa', '=', $row[1]],
+        ])->first();
 
         if ($diagnosaExists) {
-            // Jika ada, update data diagnosa
             $diagnosaExists->update([
                 'kd_diagnosa' => $newCode,
                 'harga' => $row[2],

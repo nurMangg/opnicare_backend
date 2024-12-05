@@ -45,7 +45,6 @@ Route::get('api/csrf-token', function () {
 })->middleware('throttle:5,1');
 
 Route::post('api/login', [ApiController::class, 'login'])
-    ->middleware('throttle:5,1')
     ->name('api.login');
 
 Route::post('/api/tambah-obat', [ApiController::class, 'tambahObat'])->name('api.tambahObat');

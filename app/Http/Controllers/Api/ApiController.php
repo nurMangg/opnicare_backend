@@ -99,7 +99,6 @@ class ApiController extends Controller
      *     summary="Get user data",
      *     description="Get user data",
     *     security={{"sanctum":{}}},
-
      *     @OA\Response(
      *         response=200,
      *         description="User data",

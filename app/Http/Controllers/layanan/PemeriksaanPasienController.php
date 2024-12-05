@@ -180,7 +180,7 @@ public function store(Request $request)
             'nadi' => 'nullable|numeric',
             'frekuensi_napas' => 'nullable|numeric',
             'diagnosis_utama' => 'required|exists:diagnosis_icd,code', 
-            'diagnosis_pendukung' => 'nullable|exists:diagnosis_utama,code',
+            'diagnosis_pendukung' => 'nullable|exists:diagnosis_icd,code',
             'tindakan_medis' => 'nullable|array',
             'resep_obat' => 'nullable|array',
             'jumlah_obat' => 'nullable|array',
@@ -200,7 +200,7 @@ public function store(Request $request)
     ->count();
 
     $diagnosaRM = str_pad($diagnosaCount + 1, 4, '0', STR_PAD_LEFT);
-    // dd($request->all());
+    $diagnosaKD = Pemeriksaan::where('kd_pendaftaran', $request->kd_pendaftaran)->first()->kd_diagnosa ?? null;
 
     $diagnosa = Pemeriksaan::updateOrCreate(
         ['kd_pendaftaran' => $request->kd_pendaftaran],
@@ -222,10 +222,10 @@ public function store(Request $request)
         'rujukan' => $request->rujukan,
         'anjuran_dokter' => $request->anjuran_dokter,
         'status_pulang' => $request->status_pulang,
+        'kd_diagnosa' => $diagnosaKD === null ? $this->generateUniqueCode($diagnosaRM) : $diagnosaKD,
             'tanggal_diagnosa' => now(),
-            'kd_diagnosa' => $this->generateUniqueCode($diagnosaRM),
             'kd_pendaftaran' => $request->kd_pendaftaran,
-        ]
+        ],
     );
 
     $pendaftaran = Pendaftaran::where('no_pendaftaran', $request->kd_pendaftaran)->first();
@@ -252,9 +252,10 @@ public function store(Request $request)
     ->count();
     $no_pembayaran = str_pad($pembayaranCount + 1, 4, '0', STR_PAD_LEFT);
 
-    $pembayaran = Pembayaran::updateOrCreate(['no_diagnosa' => $diagnosa->no_diagnosa],
+    $pembayaranKD = Pembayaran::where('no_diagnosa', $diagnosa->kd_diagnosa)->first()->no_pembayaran ?? null;
+    $pembayaran = Pembayaran::updateOrCreate(['no_diagnosa' => $diagnosa->kd_diagnosa],
     [
-        'no_pembayaran' => $this->generateUniqueCodePembayaran($no_pembayaran),
+        'no_pembayaran' => $pembayaranKD === null ? $this->generateUniqueCodePembayaran($no_pembayaran) : $pembayaranKD,
         'no_diagnosa' => $diagnosa->kd_diagnosa,
         'no_rm' => $diagnosa->pasien_id,
         'nama_pasien' => Pasien::where('no_rm', $diagnosa->pasien_id)->first()->nama_pasien,
